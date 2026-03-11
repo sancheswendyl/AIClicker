@@ -17,7 +17,7 @@
 -->
 <resources>
 
-    <string name="app_name" translatable="false">Klick\'r</string>
+    <string name="app_name" translatable="false">IAClicker</string>
     <string name="notification_channel_name" translatable="false">Klick\'r</string>
 
     <!-- Application wide texts. -->
