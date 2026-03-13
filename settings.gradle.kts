@@ -23,7 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Klick'r"
+rootProject.name = "AIClicker"
 
 includeBuild("build-logic")
 
