@@ -26,8 +26,11 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleFDroidDebug
 
+      - name: Rename APK
+        run: mv smartautoclicker/build/outputs/apk/fDroid/debug/*.apk smartautoclicker/build/outputs/apk/fDroid/debug/AIClicker.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: smart-autoclicker-debug
-          path: smartautoclicker/build/outputs/apk/fDroid/debug/*.apk
+          name: AIClicker
+          path: smartautoclicker/build/outputs/apk/fDroid/debug/AIClicker.apk
