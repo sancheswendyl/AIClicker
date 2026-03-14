@@ -17,6 +17,8 @@
 package com.buzbuz.smartautoclicker.core.domain.model.condition
 
 import com.buzbuz.smartautoclicker.core.base.identifier.Identifier
+import java.time.DayOfWeek
+import java.time.LocalDate
 import com.buzbuz.smartautoclicker.core.base.interfaces.Completable
 import com.buzbuz.smartautoclicker.core.base.interfaces.Identifiable
 import com.buzbuz.smartautoclicker.core.database.entity.CounterComparisonOperation
@@ -29,6 +31,7 @@ sealed class TriggerCondition: Condition(), Identifiable, Completable {
         is OnBroadcastReceived -> (this as OnBroadcastReceived).copy(eventId = evtId)
         is OnCounterCountReached -> (this as OnCounterCountReached).copy(eventId = evtId)
         is OnTimerReached -> (this as OnTimerReached).copy(eventId = evtId)
+        is OnTimeOfDayReached -> (this as OnTimeOfDayReached).copy(eventId = evtId)
     }
 
     override fun hashCodeNoIds(): Int =
@@ -81,6 +84,23 @@ sealed class TriggerCondition: Condition(), Identifiable, Completable {
 
         override fun hashCodeNoIds(): Int =
             super.hashCode() + counterName.hashCode() + comparisonOperation.hashCode() + counterValue.hashCode()
+    }
+
+    data class OnTimeOfDayReached(
+        override val id: Identifier,
+        override val eventId: Identifier,
+        override val name: String,
+        val hour: Int,
+        val minute: Int,
+        val daysOfWeek: Set<DayOfWeek> = emptySet(),
+        val specificDate: LocalDate? = null,
+    ) : TriggerCondition() {
+
+        override fun isComplete(): Boolean =
+            super.isComplete() && hour in 0..23 && minute in 0..59
+
+        override fun hashCodeNoIds(): Int =
+            super.hashCode() + hour.hashCode() + minute.hashCode() + daysOfWeek.hashCode() + specificDate.hashCode()
     }
 
     data class OnTimerReached(

@@ -95,6 +95,8 @@ enum class ConditionType {
     ON_IMAGE_DETECTED,
     /** Toggle the enabled state of an event. */
     ON_TIMER_REACHED,
+    /** Condition fulfilled upon time of day. */
+    ON_TIME_OF_DAY_REACHED,
 }
 
 

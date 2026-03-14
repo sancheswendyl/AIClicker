@@ -95,4 +95,10 @@ data class ConditionEntity(
     // ConditionType.ON_TIMER_REACHED
     @ColumnInfo(name = "timer_value_ms") val timerValueMs: Long? = null,
     @ColumnInfo(name = "timer_restart_when_reached") val restartWhenReached: Boolean? = null,
+
+    // ConditionType.ON_TIME_OF_DAY_REACHED
+    @ColumnInfo(name = "time_hour") val timeHour: Int? = null,
+    @ColumnInfo(name = "time_minute") val timeMinute: Int? = null,
+    @ColumnInfo(name = "time_days_of_week") val timeDaysOfWeek: String? = null,
+    @ColumnInfo(name = "time_date") val timeDate: String? = null,
 ) : EntityWithId
