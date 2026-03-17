@@ -86,6 +86,7 @@ internal class ConditionsVerifier(
             is TriggerCondition.OnBroadcastReceived -> verifyOnBroadcastReceived(condition)
             is TriggerCondition.OnCounterCountReached -> verifyOnCounterReached(condition)
             is TriggerCondition.OnTimerReached -> verifyOnTimerReached(condition)
+            is TriggerCondition.OnTimeOfDayReached -> verifyOnTimeOfDayReached(condition)
         }
 
     private fun verifyOnBroadcastReceived(condition: TriggerCondition.OnBroadcastReceived): Boolean =
@@ -127,6 +128,9 @@ internal class ConditionsVerifier(
             true
         } else false
     }
+
+    private fun verifyOnTimeOfDayReached(condition: TriggerCondition.OnTimeOfDayReached): Boolean =
+        state.isTimeOfDayReached(condition)
 
     private suspend fun verifyImageCondition(condition: ImageCondition): ProcessedConditionResult.Image {
         progressListener?.onImageConditionProcessingStarted()

@@ -32,7 +32,8 @@ internal class ProcessingState(
     private val broadcastsState: BroadcastsState = BroadcastsState(triggerEvents),
     private val countersState: CountersState = CountersState(imageEvents, triggerEvents, progressListener),
     private val timersState: TimersState = TimersState(triggerEvents),
-) : IBroadcastsState by broadcastsState, ICountersState by countersState, ITimersState by timersState, IEventsState by eventsState {
+    private val timeOfDayState: TimeOfDayState = TimeOfDayState(),
+) : IBroadcastsState by broadcastsState, ICountersState by countersState, ITimersState by timersState, ITimeOfDayState by timeOfDayState, IEventsState by eventsState {
 
     init {
         eventsState.setEventStateListener(object : EventStateListener {
