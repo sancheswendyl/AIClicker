@@ -23,6 +23,10 @@ import com.buzbuz.smartautoclicker.core.database.entity.CounterComparisonOperati
 import com.buzbuz.smartautoclicker.core.database.entity.ConditionType
 import com.buzbuz.smartautoclicker.core.database.entity.CounterOperationValueType
 import com.buzbuz.smartautoclicker.core.domain.model.CounterOperationValue
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.DayOfWeek
+import java.time.LocalDate
 
 
 /** @return the entity equivalent of this condition. */
@@ -50,6 +54,7 @@ internal fun TriggerCondition.toEntity(): ConditionEntity = when (this) {
     is TriggerCondition.OnBroadcastReceived -> toBroadcastReceivedEntity()
     is TriggerCondition.OnCounterCountReached -> toCounterReachedEntity()
     is TriggerCondition.OnTimerReached -> toTimerReachedEntity()
+    is TriggerCondition.OnTimeOfDayReached -> toTimeOfDayReachedEntity()
 }
 
 private fun TriggerCondition.OnBroadcastReceived.toBroadcastReceivedEntity(): ConditionEntity =
@@ -91,12 +96,39 @@ private fun TriggerCondition.OnTimerReached.toTimerReachedEntity(): ConditionEnt
     )
 
 
+private fun TriggerCondition.OnTimeOfDayReached.toTimeOfDayReachedEntity(): ConditionEntity =
+    ConditionEntity(
+        id = id.databaseId,
+        eventId = eventId.databaseId,
+        name = name,
+        type = ConditionType.ON_TIME_OF_DAY_REACHED,
+        timeHour = hour,
+        timeMinute = minute,
+        timeDaysOfWeek = if (daysOfWeek.isNotEmpty()) daysOfWeek.joinToString(",") { it.name } else null,
+        timeDate = specificDate?.toString(),
+        priority = 0,
+    )
+
+private fun TriggerCondition.OnTimeOfDayReached.toTimeOfDayReachedEntity(): ConditionEntity =
+    ConditionEntity(
+        id = id.databaseId,
+        eventId = eventId.databaseId,
+        name = name,
+        type = ConditionType.ON_TIME_OF_DAY_REACHED,
+        timeHour = hour,
+        timeMinute = minute,
+        timeDaysOfWeek = if (daysOfWeek.isNotEmpty()) daysOfWeek.joinToString(",") { it.name } else null,
+        timeDate = specificDate?.toString(),
+        priority = 0,
+    )
+
 internal fun ConditionEntity.toDomain(cleanIds: Boolean = false): Condition =
     when (type) {
         ConditionType.ON_IMAGE_DETECTED -> toDomainImageCondition(cleanIds)
         ConditionType.ON_BROADCAST_RECEIVED -> toDomainBroadcastReceived(cleanIds)
         ConditionType.ON_COUNTER_REACHED -> toDomainCounterReached(cleanIds)
         ConditionType.ON_TIMER_REACHED -> toDomainTimerReached(cleanIds)
+        ConditionType.ON_TIME_OF_DAY_REACHED -> toDomainTimeOfDayReached(cleanIds)
     }
 
 /** @return the condition for this entity. */
@@ -144,6 +176,28 @@ private fun ConditionEntity.toDomainTimerReached(cleanIds: Boolean = false): Tri
         name = name,
         durationMs = timerValueMs!!,
         restartWhenReached = restartWhenReached!!,
+    )
+
+private fun ConditionEntity.toDomainTimeOfDayReached(cleanIds: Boolean = false): TriggerCondition =
+    TriggerCondition.OnTimeOfDayReached(
+        id = Identifier(id = id, asTemporary = cleanIds),
+        eventId = Identifier(id = eventId, asTemporary = cleanIds),
+        name = name,
+        hour = timeHour!!,
+        minute = timeMinute!!,
+        daysOfWeek = timeDaysOfWeek?.split(",")?.map { DayOfWeek.valueOf(it) }?.toSet() ?: emptySet(),
+        specificDate = timeDate?.let { LocalDate.parse(it) },
+    )
+
+private fun ConditionEntity.toDomainTimeOfDayReached(cleanIds: Boolean = false): TriggerCondition =
+    TriggerCondition.OnTimeOfDayReached(
+        id = Identifier(id = id, asTemporary = cleanIds),
+        eventId = Identifier(id = eventId, asTemporary = cleanIds),
+        name = name,
+        hour = timeHour!!,
+        minute = timeMinute!!,
+        daysOfWeek = timeDaysOfWeek?.split(",")?.map { DayOfWeek.valueOf(it) }?.toSet() ?: emptySet(),
+        specificDate = timeDate?.let { LocalDate.parse(it) },
     )
 
 private fun CounterComparisonOperation.toDomain(): TriggerCondition.OnCounterCountReached.ComparisonOperation =

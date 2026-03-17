@@ -27,6 +27,7 @@ import com.buzbuz.smartautoclicker.core.database.entity.IntentExtraEntity
 import com.buzbuz.smartautoclicker.core.database.entity.ScenarioEntity
 import com.buzbuz.smartautoclicker.core.database.entity.ScenarioStatsEntity
 import com.buzbuz.smartautoclicker.core.database.migrations.*
+import androidx.room.RoomDatabase
 
 import javax.inject.Singleton
 
@@ -54,7 +55,12 @@ import javax.inject.Singleton
         AutoMigration (from = 17, to = 18),
     ]
 )
-abstract class ClickDatabase : ScenarioDatabase()
+abstract class ClickDatabase : ScenarioDatabase() {
+
+    companion object {
+        val MANUAL_MIGRATIONS = arrayOf(Migration18to19)
+    }
+}
 
 /** Current version of the database. */
-const val CLICK_DATABASE_VERSION = 18
+const val CLICK_DATABASE_VERSION = 19
