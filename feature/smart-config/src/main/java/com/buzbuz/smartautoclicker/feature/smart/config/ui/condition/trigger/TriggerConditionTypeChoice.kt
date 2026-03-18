@@ -46,9 +46,9 @@ sealed class TriggerConditionTypeChoice(
         R.drawable.ic_timer_reached,
     )
 }
-
-fun allTriggerConditionChoices() = listOf(
-    TriggerConditionTypeChoice.OnBroadcastReceived,
-    TriggerConditionTypeChoice.OnCounterReached,
-    TriggerConditionTypeChoice.OnTimerReached,
-)
+    data object OnTimeOfDayReached : TriggerConditionTypeChoice(
+        R.string.item_time_of_day_title,
+        R.string.item_time_of_day_desc,
+        R.drawable.ic_timer_reached,
+    )
+}

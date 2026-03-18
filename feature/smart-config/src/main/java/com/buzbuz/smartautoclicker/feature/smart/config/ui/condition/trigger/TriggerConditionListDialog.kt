@@ -44,6 +44,7 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.copy.Condit
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.broadcast.BroadcastReceivedConditionDialog
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.counter.CounterReachedConditionDialog
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timer.TimerReachedConditionDialog
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday.TimeOfDayConditionDialog
 
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
@@ -154,6 +155,8 @@ class TriggerConditionListDialog() : OverlayDialog(R.style.ScenarioConfigTheme) 
                 CounterReachedConditionDialog(conditionConfigDialogListener)
             is TriggerCondition.OnTimerReached ->
                 TimerReachedConditionDialog(conditionConfigDialogListener)
+            is TriggerCondition.OnTimeOfDayReached ->
+                TimeOfDayConditionDialog(conditionConfigDialogListener)
         }
 
         overlayManager.navigateTo(

@@ -191,11 +191,21 @@ class EditedItemsBuilder internal constructor(
             restartWhenReached = false,
         )
 
+    fun createNewOnTimeOfDayReached(context: Context): TriggerCondition.OnTimeOfDayReached =
+        TriggerCondition.OnTimeOfDayReached(
+            id = conditionsIdCreator.generateNewIdentifier(),
+            eventId = getEditedEventIdOrThrow(),
+            name = defaultValues.conditionName(context),
+            hour = 8,
+            minute = 0,
+        )
+
     fun createNewTriggerConditionFrom(condition: TriggerCondition, eventId: Identifier = getEditedEventIdOrThrow()): TriggerCondition =
         when (condition) {
             is TriggerCondition.OnBroadcastReceived -> createNewOnBroadcastReceivedFrom(condition, eventId)
             is TriggerCondition.OnCounterCountReached -> createNewOnCounterReachedFrom(condition, eventId)
             is TriggerCondition.OnTimerReached -> createNewOnTimerReachedFrom(condition, eventId)
+            is TriggerCondition.OnTimeOfDayReached -> createNewOnTimeOfDayReachedFrom(condition, eventId)
         }
 
     private fun createNewOnBroadcastReceivedFrom(condition: TriggerCondition.OnBroadcastReceived, eventId: Identifier) =
@@ -215,6 +225,13 @@ class EditedItemsBuilder internal constructor(
         )
 
     private fun createNewOnTimerReachedFrom(condition: TriggerCondition.OnTimerReached, eventId: Identifier) =
+        condition.copy(
+            id = conditionsIdCreator.generateNewIdentifier(),
+            eventId = eventId,
+            name = "" + condition.name,
+        )
+
+    private fun createNewOnTimeOfDayReachedFrom(condition: TriggerCondition.OnTimeOfDayReached, eventId: Identifier) =
         condition.copy(
             id = conditionsIdCreator.generateNewIdentifier(),
             eventId = eventId,

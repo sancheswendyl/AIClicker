@@ -22,6 +22,7 @@ import androidx.annotation.DrawableRes
 import com.buzbuz.smartautoclicker.core.domain.model.condition.TriggerCondition
 import com.buzbuz.smartautoclicker.core.domain.model.condition.TriggerCondition.OnCounterCountReached.ComparisonOperation.*
 import com.buzbuz.smartautoclicker.core.ui.utils.formatDuration
+import java.time.DayOfWeek
 import com.buzbuz.smartautoclicker.feature.smart.config.R
 
 
@@ -47,6 +48,7 @@ internal fun TriggerCondition.getIconRes(): Int =
         is TriggerCondition.OnBroadcastReceived -> R.drawable.ic_broadcast_received
         is TriggerCondition.OnCounterCountReached -> R.drawable.ic_counter_reached
         is TriggerCondition.OnTimerReached -> R.drawable.ic_timer_reached
+        is TriggerCondition.OnTimeOfDayReached -> R.drawable.ic_timer_reached
     }
 
 private fun TriggerCondition.getTriggerConditionDescription(context: Context): String =
@@ -67,6 +69,16 @@ private fun TriggerCondition.getTriggerConditionDescription(context: Context): S
             R.string.item_timer_reached_details,
             formatDuration(durationMs),
         )
+
+        is TriggerCondition.OnTimeOfDayReached -> {
+            val timeStr = String.format("%02d:%02d", hour, minute)
+            val scheduleStr = when {
+                specificDate != null -> specificDate.toString()
+                daysOfWeek.isNotEmpty() -> daysOfWeek.joinToString(", ") { it.name.take(3) }
+                else -> context.getString(R.string.item_time_of_day_daily)
+            }
+            "$timeStr - $scheduleStr"
+        }
     }
 
 private fun TriggerCondition.OnCounterCountReached.getComparisonOperationDisplayName(context: Context): String =

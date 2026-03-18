@@ -419,4 +419,9 @@
     <string name="content_desc_open_event_list">Open the event list</string>
     <string name="content_desc_application_icon">The icon of the application to start.</string>
 
+    <string name="item_time_of_day_daily">Todo dia</string>
+    <string name="input_field_label_time_hour">Hora (0-23)</string>
+    <string name="input_field_label_time_minute">Minuto (0-59)</string>
+    <string name="item_time_of_day_title">Quando o horário for atingido</string>
+    <string name="item_time_of_day_desc">Cumprido quando o horário definido for atingido</string>
 </resources>

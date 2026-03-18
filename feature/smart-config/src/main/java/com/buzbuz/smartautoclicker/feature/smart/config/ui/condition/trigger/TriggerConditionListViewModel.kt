@@ -61,6 +61,8 @@ class TriggerConditionListViewModel @Inject constructor(
                 editionRepository.editedItemsBuilder.createNewOnCounterReached(context)
             TriggerConditionTypeChoice.OnTimerReached ->
                 editionRepository.editedItemsBuilder.createNewOnTimerReached(context)
+            TriggerConditionTypeChoice.OnTimeOfDayReached ->
+                editionRepository.editedItemsBuilder.createNewOnTimeOfDayReached(context)
         }
 
     /**
