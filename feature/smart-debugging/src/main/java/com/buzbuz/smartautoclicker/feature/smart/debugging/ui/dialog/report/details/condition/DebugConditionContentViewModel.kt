@@ -189,7 +189,7 @@ class DebugConditionContentViewModel @Inject constructor(
                 comparisonOperation.getComparisonOperationDisplayName(context),
                 counterValue.value.toString(),
             )
-            is TriggerCondition.OnTimeOfDayReached -> String.format("%02d:%02d", condition.hour, condition.minute)
+            is TriggerCondition.OnTimeOfDayReached -> String.format("%02d:%02d", hour, minute)
             is TriggerCondition.OnTimerReached -> context.getString(
                 R.string.item_event_occurrence_details_trigger_desc_timer,
                 formatDuration(durationMs),
