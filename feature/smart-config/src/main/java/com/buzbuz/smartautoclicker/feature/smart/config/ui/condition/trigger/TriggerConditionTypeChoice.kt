@@ -19,8 +19,6 @@ package com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger
 import com.buzbuz.smartautoclicker.core.common.overlays.dialog.implementation.DialogChoice
 import com.buzbuz.smartautoclicker.feature.smart.config.R
 
-
-/** Choices for the dumb action type selection dialog. */
 sealed class TriggerConditionTypeChoice(
     title: Int,
     description: Int,
@@ -45,10 +43,16 @@ sealed class TriggerConditionTypeChoice(
         R.string.item_timer_reached_desc,
         R.drawable.ic_timer_reached,
     )
-}
     data object OnTimeOfDayReached : TriggerConditionTypeChoice(
         R.string.item_time_of_day_title,
         R.string.item_time_of_day_desc,
         R.drawable.ic_timer_reached,
     )
 }
+
+fun allTriggerConditionChoices() = listOf(
+    TriggerConditionTypeChoice.OnBroadcastReceived,
+    TriggerConditionTypeChoice.OnCounterReached,
+    TriggerConditionTypeChoice.OnTimerReached,
+    TriggerConditionTypeChoice.OnTimeOfDayReached,
+)

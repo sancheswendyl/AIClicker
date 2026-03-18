@@ -112,7 +112,7 @@ class TriggerConditionListDialog() : OverlayDialog(R.style.ScenarioConfigTheme) 
     private fun showTriggerConditionTypeSelectionDialog() {
         overlayManager.navigateTo(
             context = context,
-            newOverlay = MultiChoiceDialog(
+            newOverlay = MultiChoiceDialog<TriggerConditionTypeChoice>(
                 theme = R.style.AppTheme,
                 dialogTitleText = R.string.dialog_title_trigger_condition_type,
                 choices = allTriggerConditionChoices(),

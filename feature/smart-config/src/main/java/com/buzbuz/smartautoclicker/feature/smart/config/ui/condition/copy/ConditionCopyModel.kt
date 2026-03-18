@@ -132,6 +132,10 @@ class ConditionCopyModel @Inject constructor(
 
                         is TriggerCondition.OnTimerReached -> item.uiCondition.condition.name.hashCode() +
                                 item.uiCondition.condition.durationMs
+
+                        is TriggerCondition.OnTimeOfDayReached -> item.uiCondition.condition.name.hashCode() +
+                                item.uiCondition.condition.hour.hashCode() +
+                                item.uiCondition.condition.minute.hashCode()
                     }
             }
         }

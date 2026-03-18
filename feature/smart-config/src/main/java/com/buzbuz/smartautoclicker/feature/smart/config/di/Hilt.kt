@@ -48,7 +48,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.bro
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.counter.CounterReachedConditionViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timer.TimerReachedConditionViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday.TimeOfDayConditionViewModel
-import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday.TimeOfDayConditionViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.EventDialogViewModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.copy.EventCopyModel
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.ScenarioDialogViewModel
@@ -98,7 +97,6 @@ interface ScenarioConfigViewModelsEntryPoint {
     fun smartActionsBriefViewModel(): SmartActionsBriefViewModel
     fun swipeViewModel(): SwipeViewModel
     fun timerReachedConditionViewModel(): TimerReachedConditionViewModel
-    fun timeOfDayConditionViewModel(): TimeOfDayConditionViewModel
     fun timeOfDayConditionViewModel(): TimeOfDayConditionViewModel
     fun toggleEventViewModel(): ToggleEventViewModel
     fun triggerConditionsViewModel(): TriggerConditionListViewModel
