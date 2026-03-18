@@ -8,8 +8,7 @@
  */
 package com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday
 
-import android.app.DatePickerDialog
-import android.view.ContextThemeWrapper
+import com.google.android.material.datepicker.MaterialDatePicker
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
@@ -90,14 +89,19 @@ class TimeOfDayConditionDialog(
             // Botão para selecionar data específica
             buttonSelectDate.setOnClickListener {
                 val today = LocalDate.now()
-                DatePickerDialog(
-                    ContextThemeWrapper(context, com.google.android.material.R.style.Theme_MaterialComponents_Dialog),
-                    { _, year, month, day ->
-                        val selectedDate = LocalDate.of(year, month + 1, day)
-                        viewModel.setSpecificDate(selectedDate)
-                    },
-                    today.year, today.monthValue - 1, today.dayOfMonth
-                ).show()
+                val picker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText(R.string.item_time_of_day_title)
+                    .build()
+                picker.addOnPositiveButtonClickListener { selection ->
+                    val selectedDate = java.time.Instant.ofEpochMilli(selection)
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDate()
+                    viewModel.setSpecificDate(selectedDate)
+                }
+                picker.show(
+                    (context as androidx.fragment.app.FragmentActivity).supportFragmentManager,
+                    "date_picker"
+                )
             }
 
             // Chips dos dias da semana
