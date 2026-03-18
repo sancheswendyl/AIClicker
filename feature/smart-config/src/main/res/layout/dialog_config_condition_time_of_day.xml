@@ -85,6 +85,7 @@
                         style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="#4169E1"
                         android:text="@string/item_time_of_day_daily"/>
 
                     <TextView
@@ -119,11 +120,10 @@
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:layout_marginBottom="@dimen/margin_vertical_small"/>
 
-                    <LinearLayout
+                    <com.google.android.material.chip.ChipGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                        app:singleLine="false">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_mon"
@@ -174,7 +174,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/day_sun"/>
 
-                    </LinearLayout>
+                    </com.google.android.material.chip.ChipGroup>
 
                 </LinearLayout>
 

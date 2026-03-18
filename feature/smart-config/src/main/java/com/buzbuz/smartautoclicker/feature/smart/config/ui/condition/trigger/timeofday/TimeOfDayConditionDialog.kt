@@ -82,18 +82,7 @@ class TimeOfDayConditionDialog(
             }
 
             buttonSelectDate.setOnClickListener {
-                try {
-                    val today = LocalDate.now()
-                    DatePickerDialog(
-                        context,
-                        { _, year, month, day ->
-                            viewModel.setSpecificDate(LocalDate.of(year, month + 1, day))
-                        },
-                        today.year, today.monthValue - 1, today.dayOfMonth
-                    ).show()
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Erro: ${e.javaClass.simpleName}: ${e.message}", Toast.LENGTH_LONG).show()
-                }
+                showDatePickerInline(root)
             }
 
             chipMon.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.MONDAY) }
@@ -106,6 +95,45 @@ class TimeOfDayConditionDialog(
         }
 
         return viewBinding.root
+    }
+
+    private fun showDatePickerInline(root: android.view.View) {
+        val today = LocalDate.now()
+        val yearPicker = android.widget.NumberPicker(context).apply {
+            minValue = today.year
+            maxValue = today.year + 5
+            value = today.year
+        }
+        val monthPicker = android.widget.NumberPicker(context).apply {
+            minValue = 1
+            maxValue = 12
+            value = today.monthValue
+            displayedValues = arrayOf("Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez")
+        }
+        val dayPicker = android.widget.NumberPicker(context).apply {
+            minValue = 1
+            maxValue = 31
+            value = today.dayOfMonth
+        }
+
+        val layout = android.widget.LinearLayout(context).apply {
+            orientation = android.widget.LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER
+            addView(dayPicker)
+            addView(monthPicker)
+            addView(yearPicker)
+        }
+
+        android.app.AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+            .setTitle(R.string.item_time_of_day_title)
+            .setView(layout)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.setSpecificDate(LocalDate.of(yearPicker.value, monthPicker.value, dayPicker.value))
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
+            .apply { window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY) }
+            .show()
     }
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
