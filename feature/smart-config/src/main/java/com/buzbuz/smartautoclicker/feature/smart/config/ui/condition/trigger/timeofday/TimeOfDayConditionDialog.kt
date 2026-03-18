@@ -8,6 +8,7 @@
  */
 package com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday
 
+import android.app.DatePickerDialog
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
@@ -23,15 +24,17 @@ import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setError
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setLabel
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setOnTextChangedListener
 import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setText
-import com.buzbuz.smartautoclicker.core.ui.utils.MinMaxInputFilter
 import com.buzbuz.smartautoclicker.feature.smart.config.R
-import com.buzbuz.smartautoclicker.feature.smart.config.databinding.DialogConfigConditionTimerBinding
+import com.buzbuz.smartautoclicker.feature.smart.config.databinding.DialogConfigConditionTimeOfDayBinding
 import com.buzbuz.smartautoclicker.feature.smart.config.di.ScenarioConfigViewModelsEntryPoint
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.dialogs.showCloseWithoutSavingDialog
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.OnConditionConfigCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class TimeOfDayConditionDialog(
     private val listener: OnConditionConfigCompleteListener,
@@ -42,10 +45,10 @@ class TimeOfDayConditionDialog(
         creator = { timeOfDayConditionViewModel() },
     )
 
-    private lateinit var viewBinding: DialogConfigConditionTimerBinding
+    private lateinit var viewBinding: DialogConfigConditionTimeOfDayBinding
 
     override fun onCreateView(): ViewGroup {
-        viewBinding = DialogConfigConditionTimerBinding.inflate(LayoutInflater.from(context)).apply {
+        viewBinding = DialogConfigConditionTimeOfDayBinding.inflate(LayoutInflater.from(context)).apply {
             layoutTopBar.apply {
                 dialogTitle.setText(R.string.item_time_of_day_title)
                 buttonDismiss.setDebouncedOnClickListener { back() }
@@ -74,15 +77,36 @@ class TimeOfDayConditionDialog(
             }
             hideSoftInputOnFocusLoss(fieldName.textField)
 
-            // Reusing duration fields for hour/minute input
-            editDurationLayout.apply {
-                textField.filters = arrayOf(MinMaxInputFilter(min = 0, max = 23))
-                setLabel(R.string.input_field_label_time_hour)
-                setOnTextChangedListener {
-                    viewModel.setHour(if (it.isNotEmpty()) it.toString().toInt() else 0)
+            // TimePicker para hora e minuto
+            timePicker.apply {
+                setIs24HourView(true)
+                setOnTimeChangedListener { _, hour, minute ->
+                    viewModel.setHour(hour)
+                    viewModel.setMinute(minute)
                 }
             }
-            hideSoftInputOnFocusLoss(editDurationLayout.textField)
+
+            // Botão para selecionar data específica
+            buttonSelectDate.setOnClickListener {
+                val today = LocalDate.now()
+                DatePickerDialog(
+                    context,
+                    { _, year, month, day ->
+                        val selectedDate = LocalDate.of(year, month + 1, day)
+                        viewModel.setSpecificDate(selectedDate)
+                    },
+                    today.year, today.monthValue - 1, today.dayOfMonth
+                ).show()
+            }
+
+            // Chips dos dias da semana
+            chipMon.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.MONDAY) }
+            chipTue.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.TUESDAY) }
+            chipWed.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.WEDNESDAY) }
+            chipThu.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.THURSDAY) }
+            chipFri.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.FRIDAY) }
+            chipSat.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.SATURDAY) }
+            chipSun.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.SUNDAY) }
         }
 
         return viewBinding.root
@@ -98,7 +122,9 @@ class TimeOfDayConditionDialog(
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.name.collect(viewBinding.fieldName::setText) }
                 launch { viewModel.nameError.collect(viewBinding.fieldName::setError) }
-                launch { viewModel.hour.collect(::updateHourField) }
+                launch { viewModel.hour.collect(::updateTimePicker) }
+                launch { viewModel.specificDate.collect(::updateSelectedDate) }
+                launch { viewModel.daysOfWeek.collect(::updateDayChips) }
                 launch { viewModel.conditionCanBeSaved.collect(::updateSaveButton) }
             }
         }
@@ -116,8 +142,34 @@ class TimeOfDayConditionDialog(
         super.back()
     }
 
-    private fun updateHourField(hour: Int) {
-        viewBinding.editDurationLayout.setText(hour.toString(), android.text.InputType.TYPE_CLASS_NUMBER)
+    private fun updateTimePicker(hour: Int) {
+        viewBinding.timePicker.hour = hour
+    }
+
+    private fun updateSelectedDate(date: LocalDate?) {
+        viewBinding.apply {
+            if (date != null) {
+                val formatted = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+                textSelectedDate.text = formatted
+                textSelectedDate.visibility = View.VISIBLE
+                buttonSelectDate.text = formatted
+            } else {
+                textSelectedDate.visibility = View.GONE
+                buttonSelectDate.setText(R.string.item_time_of_day_select_date)
+            }
+        }
+    }
+
+    private fun updateDayChips(days: Set<DayOfWeek>) {
+        viewBinding.apply {
+            chipMon.isChecked = DayOfWeek.MONDAY in days
+            chipTue.isChecked = DayOfWeek.TUESDAY in days
+            chipWed.isChecked = DayOfWeek.WEDNESDAY in days
+            chipThu.isChecked = DayOfWeek.THURSDAY in days
+            chipFri.isChecked = DayOfWeek.FRIDAY in days
+            chipSat.isChecked = DayOfWeek.SATURDAY in days
+            chipSun.isChecked = DayOfWeek.SUNDAY in days
+        }
     }
 
     private fun updateSaveButton(canBeSaved: Boolean) {

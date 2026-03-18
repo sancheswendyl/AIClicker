@@ -424,4 +424,13 @@
     <string name="input_field_label_time_minute">Minuto (0-59)</string>
     <string name="item_time_of_day_title">Quando o horário for atingido</string>
     <string name="item_time_of_day_desc">Cumprido quando o horário definido for atingido</string>
+    <string name="item_time_of_day_days_of_week">Dias da semana</string>
+    <string name="item_time_of_day_select_date">Selecionar data específica</string>
+    <string name="day_mon">Seg</string>
+    <string name="day_tue">Ter</string>
+    <string name="day_wed">Qua</string>
+    <string name="day_thu">Qui</string>
+    <string name="day_fri">Sex</string>
+    <string name="day_sat">Sáb</string>
+    <string name="day_sun">Dom</string>
 </resources>
