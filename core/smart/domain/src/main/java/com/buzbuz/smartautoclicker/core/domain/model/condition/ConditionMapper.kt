@@ -25,11 +25,7 @@ import com.buzbuz.smartautoclicker.core.database.entity.CounterOperationValueTyp
 import com.buzbuz.smartautoclicker.core.domain.model.CounterOperationValue
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.DayOfWeek
-import java.time.LocalDate
 
-
-/** @return the entity equivalent of this condition. */
 internal fun ImageCondition.toEntity() = ConditionEntity(
     id = id.databaseId,
     eventId = eventId.databaseId,
@@ -95,20 +91,6 @@ private fun TriggerCondition.OnTimerReached.toTimerReachedEntity(): ConditionEnt
         priority = 0,
     )
 
-
-private fun TriggerCondition.OnTimeOfDayReached.toTimeOfDayReachedEntity(): ConditionEntity =
-    ConditionEntity(
-        id = id.databaseId,
-        eventId = eventId.databaseId,
-        name = name,
-        type = ConditionType.ON_TIME_OF_DAY_REACHED,
-        timeHour = hour,
-        timeMinute = minute,
-        timeDaysOfWeek = if (daysOfWeek.isNotEmpty()) daysOfWeek.joinToString(",") { it.name } else null,
-        timeDate = specificDate?.toString(),
-        priority = 0,
-    )
-
 private fun TriggerCondition.OnTimeOfDayReached.toTimeOfDayReachedEntity(): ConditionEntity =
     ConditionEntity(
         id = id.databaseId,
@@ -131,7 +113,6 @@ internal fun ConditionEntity.toDomain(cleanIds: Boolean = false): Condition =
         ConditionType.ON_TIME_OF_DAY_REACHED -> toDomainTimeOfDayReached(cleanIds)
     }
 
-/** @return the condition for this entity. */
 private fun ConditionEntity.toDomainImageCondition(cleanIds: Boolean = false): ImageCondition =
     ImageCondition(
         id = Identifier(id = id, asTemporary = cleanIds),
@@ -168,7 +149,6 @@ private fun ConditionEntity.toDomainCounterReached(cleanIds: Boolean = false): T
         ),
     )
 
-
 private fun ConditionEntity.toDomainTimerReached(cleanIds: Boolean = false): TriggerCondition =
     TriggerCondition.OnTimerReached(
         id = Identifier(id = id, asTemporary = cleanIds),
@@ -176,17 +156,6 @@ private fun ConditionEntity.toDomainTimerReached(cleanIds: Boolean = false): Tri
         name = name,
         durationMs = timerValueMs!!,
         restartWhenReached = restartWhenReached!!,
-    )
-
-private fun ConditionEntity.toDomainTimeOfDayReached(cleanIds: Boolean = false): TriggerCondition =
-    TriggerCondition.OnTimeOfDayReached(
-        id = Identifier(id = id, asTemporary = cleanIds),
-        eventId = Identifier(id = eventId, asTemporary = cleanIds),
-        name = name,
-        hour = timeHour!!,
-        minute = timeMinute!!,
-        daysOfWeek = timeDaysOfWeek?.split(",")?.map { DayOfWeek.valueOf(it) }?.toSet() ?: emptySet(),
-        specificDate = timeDate?.let { LocalDate.parse(it) },
     )
 
 private fun ConditionEntity.toDomainTimeOfDayReached(cleanIds: Boolean = false): TriggerCondition =
