@@ -189,6 +189,7 @@ class DebugConditionContentViewModel @Inject constructor(
                 comparisonOperation.getComparisonOperationDisplayName(context),
                 counterValue.value.toString(),
             )
+            is TriggerCondition.OnTimeOfDayReached -> String.format("%02d:%02d", condition.hour, condition.minute)
             is TriggerCondition.OnTimerReached -> context.getString(
                 R.string.item_event_occurrence_details_trigger_desc_timer,
                 formatDuration(durationMs),
@@ -200,6 +201,7 @@ class DebugConditionContentViewModel @Inject constructor(
         when (this) {
             is TriggerCondition.OnBroadcastReceived -> R.drawable.ic_broadcast_received
             is TriggerCondition.OnCounterCountReached -> R.drawable.ic_counter_reached
+            is TriggerCondition.OnTimeOfDayReached -> R.drawable.ic_timer_reached
             is TriggerCondition.OnTimerReached -> R.drawable.ic_timer_reached
         }
 
