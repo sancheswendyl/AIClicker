@@ -94,7 +94,7 @@ class TimeOfDayConditionDialog(
                     .build()
                 picker.addOnPositiveButtonClickListener { selection ->
                     val selectedDate = java.time.Instant.ofEpochMilli(selection)
-                        .atZone(java.time.ZoneId.systemDefault())
+                        .atZone(java.time.ZoneOffset.UTC)
                         .toLocalDate()
                     viewModel.setSpecificDate(selectedDate)
                 }
