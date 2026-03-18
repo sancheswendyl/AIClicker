@@ -85,6 +85,9 @@ class TimeOfDayConditionViewModel @Inject constructor(
         updateEditedCondition { it.copy(specificDate = date, daysOfWeek = emptySet()) }
     }
 
+    fun getSpecificDate(): java.time.LocalDate? =
+        editionRepository.editionState.getEditedCondition<TriggerCondition.OnTimeOfDayReached>()?.specificDate
+
     fun clearSchedule() {
         updateEditedCondition { it.copy(daysOfWeek = emptySet(), specificDate = null) }
     }
