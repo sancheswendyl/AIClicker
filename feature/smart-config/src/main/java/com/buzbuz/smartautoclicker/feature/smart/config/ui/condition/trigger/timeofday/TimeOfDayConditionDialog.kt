@@ -132,7 +132,10 @@ class TimeOfDayConditionDialog(
             }
             .setNegativeButton(android.R.string.cancel, null)
             .create()
-            .apply { window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY) }
+            .apply {
+                window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+                window?.attributes?.flags = window?.attributes?.flags?.or(android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL) ?: 0
+            }
             .show()
     }
 
