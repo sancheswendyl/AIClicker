@@ -9,6 +9,7 @@
 package com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday
 
 import android.app.DatePickerDialog
+import android.view.ContextThemeWrapper
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
@@ -90,7 +91,7 @@ class TimeOfDayConditionDialog(
             buttonSelectDate.setOnClickListener {
                 val today = LocalDate.now()
                 DatePickerDialog(
-                    context,
+                    ContextThemeWrapper(context, com.google.android.material.R.style.Theme_MaterialComponents_Dialog),
                     { _, year, month, day ->
                         val selectedDate = LocalDate.of(year, month + 1, day)
                         viewModel.setSpecificDate(selectedDate)
