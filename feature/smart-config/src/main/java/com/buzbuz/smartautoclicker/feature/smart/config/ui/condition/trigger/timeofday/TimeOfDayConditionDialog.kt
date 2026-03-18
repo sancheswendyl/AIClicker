@@ -1,18 +1,14 @@
 /*
  * Copyright (C) 2025 AIClicker
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
  */
 package com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.timeofday
 
-import com.google.android.material.datepicker.MaterialDatePicker
+import android.app.DatePickerDialog
 import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -77,7 +73,6 @@ class TimeOfDayConditionDialog(
             }
             hideSoftInputOnFocusLoss(fieldName.textField)
 
-            // TimePicker para hora e minuto
             timePicker.apply {
                 setIs24HourView(true)
                 setOnTimeChangedListener { _, hour, minute ->
@@ -86,25 +81,21 @@ class TimeOfDayConditionDialog(
                 }
             }
 
-            // Botão para selecionar data específica
             buttonSelectDate.setOnClickListener {
-                val today = LocalDate.now()
-                val picker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText(R.string.item_time_of_day_title)
-                    .build()
-                picker.addOnPositiveButtonClickListener { selection ->
-                    val selectedDate = java.time.Instant.ofEpochMilli(selection)
-                        .atZone(java.time.ZoneOffset.UTC)
-                        .toLocalDate()
-                    viewModel.setSpecificDate(selectedDate)
+                try {
+                    val today = LocalDate.now()
+                    DatePickerDialog(
+                        context,
+                        { _, year, month, day ->
+                            viewModel.setSpecificDate(LocalDate.of(year, month + 1, day))
+                        },
+                        today.year, today.monthValue - 1, today.dayOfMonth
+                    ).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Erro: ${e.javaClass.simpleName}: ${e.message}", Toast.LENGTH_LONG).show()
                 }
-                picker.show(
-                    (context as androidx.fragment.app.FragmentActivity).supportFragmentManager,
-                    "date_picker"
-                )
             }
 
-            // Chips dos dias da semana
             chipMon.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.MONDAY) }
             chipTue.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.TUESDAY) }
             chipWed.setOnCheckedChangeListener { _, _ -> viewModel.toggleDayOfWeek(DayOfWeek.WEDNESDAY) }
