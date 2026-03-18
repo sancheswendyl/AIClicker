@@ -124,6 +124,15 @@ class TimeOfDayConditionDialog(
             addView(yearPicker)
         }
 
+        val wm = context.getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
+        val params = android.view.WindowManager.LayoutParams(
+            android.view.WindowManager.LayoutParams.WRAP_CONTENT,
+            android.view.WindowManager.LayoutParams.WRAP_CONTENT,
+            android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            android.graphics.PixelFormat.TRANSLUCENT
+        )
+
         android.app.AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
             .setTitle(R.string.item_time_of_day_title)
             .setView(layout)
@@ -134,7 +143,8 @@ class TimeOfDayConditionDialog(
             .create()
             .apply {
                 window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-                window?.attributes?.flags = window?.attributes?.flags?.or(android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL) ?: 0
+                window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+                window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
             }
             .show()
     }

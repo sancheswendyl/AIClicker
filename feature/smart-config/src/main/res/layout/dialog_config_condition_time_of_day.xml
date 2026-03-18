@@ -123,6 +123,7 @@
                     <com.google.android.material.chip.ChipGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="2dp"
                         app:singleLine="true">
 
                         <com.google.android.material.chip.Chip
@@ -131,9 +132,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_mon"/>
 
                         <com.google.android.material.chip.Chip
@@ -142,9 +143,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_tue"/>
 
                         <com.google.android.material.chip.Chip
@@ -153,9 +154,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_wed"/>
 
                         <com.google.android.material.chip.Chip
@@ -164,9 +165,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_thu"/>
 
                         <com.google.android.material.chip.Chip
@@ -175,9 +176,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_fri"/>
 
                         <com.google.android.material.chip.Chip
@@ -186,9 +187,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_sat"/>
 
                         <com.google.android.material.chip.Chip
@@ -197,9 +198,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="10sp"
-                            app:chipMinHeight="28dp"
-                            app:chipStartPadding="4dp"
-                            app:chipEndPadding="4dp"
+                            app:chipMinHeight="24dp"
+                            app:chipStartPadding="2dp"
+                            app:chipEndPadding="2dp"
                             android:text="@string/day_sun"/>
 
                     </com.google.android.material.chip.ChipGroup>
