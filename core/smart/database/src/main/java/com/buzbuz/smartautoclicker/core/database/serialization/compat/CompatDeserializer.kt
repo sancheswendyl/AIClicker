@@ -246,6 +246,7 @@ internal open class CompatDeserializer : Deserializer {
             ConditionType.ON_COUNTER_REACHED -> deserializeConditionCounterReached(jsonCondition)
             ConditionType.ON_IMAGE_DETECTED -> deserializeConditionImageDetected(jsonCondition)
             ConditionType.ON_TIMER_REACHED -> deserializeConditionTimerReached(jsonCondition)
+            ConditionType.ON_TIME_OF_DAY_REACHED -> null
             null -> null
         }
 
