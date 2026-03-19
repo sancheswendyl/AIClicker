@@ -41,7 +41,7 @@ import javax.inject.Inject
 /** ViewModel for the [ScenarioDialog] and its content. */
 @OptIn(FlowPreview::class)
 class ScenarioDialogViewModel @Inject constructor(
-    editionRepository: EditionRepository,
+    private val editionRepository: EditionRepository,
     private val monitoredViewsManager: MonitoredViewsManager,
 ): ViewModel() {
 
