@@ -7,15 +7,13 @@ import android.content.Context
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.buzbuz.smartautoclicker.core.common.overlays.manager.OverlayManager
 import com.buzbuz.smartautoclicker.core.domain.model.Variable
 import com.buzbuz.smartautoclicker.feature.smart.config.R
 
-/**
- * Manages the variables tab UI that can be added to any dialog.
- * Handles expand/collapse, add, edit and delete operations.
- */
 class VariablesManager(
     private val context: Context,
+    private val overlayManager: OverlayManager,
     private val btnTab: View,
     private val iconTab: android.widget.ImageView,
     private val recyclerView: RecyclerView,
@@ -44,23 +42,37 @@ class VariablesManager(
     }
 
     fun addVariable() {
-        VariableEditDialog.showCreateDialog(context) { newVariable ->
-            variables.removeAll { it.name == newVariable.name }
-            variables.add(newVariable)
-            adapter.submitList(variables.toList())
-            onVariablesChanged(variables.toList())
-        }
+        overlayManager.navigateTo(
+            context = context,
+            newOverlay = VariableEditOverlayDialog(
+                existing = null,
+                onComplete = { newVariable ->
+                    variables.removeAll { it.name == newVariable.name }
+                    variables.add(newVariable)
+                    adapter.submitList(variables.toList())
+                    onVariablesChanged(variables.toList())
+                },
+            ),
+            hideCurrent = false,
+        )
     }
 
     private fun editVariable(variable: Variable) {
-        VariableEditDialog.showEditDialog(context, variable) { updated ->
-            val index = variables.indexOfFirst { it.name == variable.name }
-            if (index >= 0) {
-                variables[index] = updated
-                adapter.submitList(variables.toList())
-                onVariablesChanged(variables.toList())
-            }
-        }
+        overlayManager.navigateTo(
+            context = context,
+            newOverlay = VariableEditOverlayDialog(
+                existing = variable,
+                onComplete = { updated ->
+                    val index = variables.indexOfFirst { it.name == variable.name }
+                    if (index >= 0) {
+                        variables[index] = updated
+                        adapter.submitList(variables.toList())
+                        onVariablesChanged(variables.toList())
+                    }
+                },
+            ),
+            hideCurrent = false,
+        )
     }
 
     private fun deleteVariable(variable: Variable) {

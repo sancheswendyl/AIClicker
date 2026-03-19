@@ -299,6 +299,7 @@ class EventDialog(
     private fun DialogEventConfigBinding.setupVariablesTab() {
         variablesManager = VariablesManager(
             context = context,
+            overlayManager = overlayManager,
             btnTab = btnVariablesTab,
             iconTab = iconVariablesTab,
             recyclerView = listVariables,
