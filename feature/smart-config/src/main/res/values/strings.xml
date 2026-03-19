@@ -433,4 +433,19 @@
     <string name="day_fri">Sex</string>
     <string name="day_sat">Sáb</string>
     <string name="day_sun">Dom</string>
+    <string name="dialog_title_set_variable">Definir variável</string>
+    <string name="field_variable_name_label">Nome da variável</string>
+    <string name="field_variable_type_label">Tipo</string>
+    <string name="field_variable_operation_label">Operação</string>
+    <string name="field_variable_value_label">Valor</string>
+    <string name="variable_type_number">Número</string>
+    <string name="variable_type_boolean">Booleano</string>
+    <string name="variable_type_text">Texto</string>
+    <string name="variable_operation_set">Definir</string>
+    <string name="variable_operation_add">Somar</string>
+    <string name="variable_operation_minus">Subtrair</string>
+    <string name="variable_operation_toggle">Inverter</string>
+    <string name="variable_operation_append">Concatenar</string>
+    <string name="variable_value_true">Verdadeiro</string>
+    <string name="variable_value_false">Falso</string>
 </resources>

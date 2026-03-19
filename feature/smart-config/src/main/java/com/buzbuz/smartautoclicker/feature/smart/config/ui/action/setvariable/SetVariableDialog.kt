@@ -1,0 +1,189 @@
+/*
+ * Copyright (C) 2025 AIClicker
+ */
+package com.buzbuz.smartautoclicker.feature.smart.config.ui.action.setvariable
+
+import android.text.InputFilter
+import android.text.InputType
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.buzbuz.smartautoclicker.core.common.overlays.base.viewModels
+import com.buzbuz.smartautoclicker.core.common.overlays.dialog.OverlayDialog
+import com.buzbuz.smartautoclicker.core.domain.model.VariableOperation
+import com.buzbuz.smartautoclicker.core.domain.model.VariableType
+import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.DialogNavigationButton
+import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.setButtonEnabledState
+import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.setItems
+import com.buzbuz.smartautoclicker.core.ui.bindings.dropdown.setSelectedItem
+import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setError
+import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setLabel
+import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setOnTextChangedListener
+import com.buzbuz.smartautoclicker.core.ui.bindings.fields.setText
+import com.buzbuz.smartautoclicker.core.ui.utils.MinMaxInputFilter
+import com.buzbuz.smartautoclicker.feature.smart.config.R
+import com.buzbuz.smartautoclicker.feature.smart.config.databinding.DialogConfigActionSetVariableBinding
+import com.buzbuz.smartautoclicker.feature.smart.config.di.ScenarioConfigViewModelsEntryPoint
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.action.OnActionConfigCompleteListener
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.dialogs.showCloseWithoutSavingDialog
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
+
+class SetVariableDialog(
+    private val listener: OnActionConfigCompleteListener,
+) : OverlayDialog(R.style.ScenarioConfigTheme) {
+
+    private val viewModel: SetVariableViewModel by viewModels(
+        entryPoint = ScenarioConfigViewModelsEntryPoint::class.java,
+        creator = { setVariableViewModel() },
+    )
+
+    private lateinit var viewBinding: DialogConfigActionSetVariableBinding
+
+    override fun onCreateView(): ViewGroup {
+        viewBinding = DialogConfigActionSetVariableBinding.inflate(LayoutInflater.from(context)).apply {
+            layoutTopBar.apply {
+                dialogTitle.setText(R.string.dialog_title_set_variable)
+                buttonDismiss.setDebouncedOnClickListener { back() }
+                buttonSave.apply {
+                    visibility = View.VISIBLE
+                    setDebouncedOnClickListener {
+                        listener.onConfirmClicked()
+                        super.back()
+                    }
+                }
+                buttonDelete.apply {
+                    visibility = View.VISIBLE
+                    setDebouncedOnClickListener {
+                        listener.onDeleteClicked()
+                        super.back()
+                    }
+                }
+            }
+
+            fieldName.apply {
+                setLabel(R.string.generic_name)
+                setOnTextChangedListener { viewModel.setName(it.toString()) }
+                textField.filters = arrayOf<InputFilter>(
+                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
+                )
+            }
+            hideSoftInputOnFocusLoss(fieldName.textField)
+
+            fieldVariableName.apply {
+                setLabel(R.string.field_variable_name_label)
+                setOnTextChangedListener { viewModel.setVariableName(it.toString()) }
+                textField.filters = arrayOf<InputFilter>(
+                    InputFilter.LengthFilter(context.resources.getInteger(R.integer.name_max_length))
+                )
+            }
+            hideSoftInputOnFocusLoss(fieldVariableName.textField)
+
+            fieldVariableType.setItems(
+                label = context.getString(R.string.field_variable_type_label),
+                items = viewModel.variableTypeItems,
+                onItemSelected = { item ->
+                    val type = when (viewModel.variableTypeItems.indexOf(item)) {
+                        0 -> VariableType.NUMBER
+                        1 -> VariableType.BOOLEAN
+                        else -> VariableType.TEXT
+                    }
+                    viewModel.setVariableType(type)
+                },
+            )
+
+            fieldOperation.setItems(
+                label = context.getString(R.string.field_variable_operation_label),
+                items = viewModel.numberOperationItems,
+                onItemSelected = { item ->
+                    val op = when (viewModel.numberOperationItems.indexOf(item)) {
+                        0 -> VariableOperation.SET
+                        1 -> VariableOperation.ADD
+                        else -> VariableOperation.MINUS
+                    }
+                    viewModel.setOperation(op)
+                },
+            )
+
+            fieldValueNumber.apply {
+                setLabel(R.string.field_variable_value_label)
+                textField.filters = arrayOf(MinMaxInputFilter(Int.MIN_VALUE, Int.MAX_VALUE))
+                setOnTextChangedListener {
+                    viewModel.setValueNumber(if (it.isNotEmpty()) it.toString().toIntOrNull() ?: 0 else 0)
+                }
+            }
+            hideSoftInputOnFocusLoss(fieldValueNumber.textField)
+
+            fieldValueBoolean.setItems(
+                label = context.getString(R.string.field_variable_value_label),
+                items = viewModel.booleanValueItems,
+                onItemSelected = { item ->
+                    viewModel.setValueBoolean(viewModel.booleanValueItems.indexOf(item) == 0)
+                },
+            )
+
+            fieldValueText.apply {
+                setLabel(R.string.field_variable_value_label)
+                setOnTextChangedListener { viewModel.setValueText(it.toString()) }
+            }
+            hideSoftInputOnFocusLoss(fieldValueText.textField)
+        }
+
+        return viewBinding.root
+    }
+
+    override fun onDialogCreated(dialog: BottomSheetDialog) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch { viewModel.isEditingAction.collect(::onActionEditingStateChanged) }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.name.collect(viewBinding.fieldName::setText) }
+                launch { viewModel.nameError.collect(viewBinding.fieldName::setError) }
+                launch { viewModel.variableName.collect(viewBinding.fieldVariableName::setText) }
+                launch { viewModel.variableNameError.collect(viewBinding.fieldVariableName::setError) }
+                launch { viewModel.variableType.collect(::updateVariableTypeUi) }
+                launch { viewModel.valueNumber.collect(::updateNumberValue) }
+                launch { viewModel.valueText.collect(viewBinding.fieldValueText::setText) }
+                launch { viewModel.isValidAction.collect(::updateSaveButton) }
+            }
+        }
+    }
+
+    override fun back() {
+        if (viewModel.hasUnsavedModifications()) {
+            context.showCloseWithoutSavingDialog {
+                listener.onDismissClicked()
+                super.back()
+            }
+            return
+        }
+        listener.onDismissClicked()
+        super.back()
+    }
+
+    private fun updateVariableTypeUi(type: VariableType) {
+        viewBinding.apply {
+            fieldValueNumber.root.visibility = if (type == VariableType.NUMBER) View.VISIBLE else View.GONE
+            fieldValueBoolean.root.visibility = if (type == VariableType.BOOLEAN) View.VISIBLE else View.GONE
+            fieldValueText.root.visibility = if (type == VariableType.TEXT) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun updateNumberValue(value: Int) {
+        viewBinding.fieldValueNumber.setText(value.toString(), InputType.TYPE_CLASS_NUMBER)
+    }
+
+    private fun updateSaveButton(isValid: Boolean) {
+        viewBinding.layoutTopBar.setButtonEnabledState(DialogNavigationButton.SAVE, isValid)
+    }
+
+    private fun onActionEditingStateChanged(isEditing: Boolean) {
+        if (!isEditing) finish()
+    }
+}
