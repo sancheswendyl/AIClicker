@@ -29,12 +29,14 @@ import com.buzbuz.smartautoclicker.core.domain.model.event.TriggerEvent
 import com.buzbuz.smartautoclicker.core.domain.model.scenario.Scenario
 
 import kotlinx.coroutines.flow.Flow
+import com.buzbuz.smartautoclicker.core.domain.model.Variable
 
 interface IEditionState {
 
     // Edited Scenario
     val scenarioCompleteState: Flow<EditedElementState<EditedScenarioState>>
     val scenarioState: Flow<EditedElementState<Scenario>>
+    val editedScenarioVariables: Flow<List<Variable>>
 
     // Edited Scenario child items (ImageEvents and TriggerEvents)
     val allEditedEvents: Flow<List<Event>>
