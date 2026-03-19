@@ -25,6 +25,7 @@ import com.buzbuz.smartautoclicker.core.domain.model.action.Intent
 import com.buzbuz.smartautoclicker.core.domain.model.action.Notification
 import com.buzbuz.smartautoclicker.core.domain.model.action.Pause
 import com.buzbuz.smartautoclicker.core.domain.model.action.SetText
+import com.buzbuz.smartautoclicker.core.domain.model.action.SetVariable
 import com.buzbuz.smartautoclicker.core.domain.model.action.Swipe
 import com.buzbuz.smartautoclicker.core.domain.model.action.SystemAction
 import com.buzbuz.smartautoclicker.core.domain.model.action.ToggleEvent
@@ -59,6 +60,7 @@ internal fun Action.getIconRes(): Int = when (this) {
     is Notification -> getNotificationIconRes()
     is SystemAction -> getSystemActionIconRes()
     is SetText -> getSetTextIconRes()
+    is SetVariable -> getSetTextIconRes()
 }
 
 internal fun Action.getActionDescription(context: Context, parent: Event, inError: Boolean): String = when (this) {
@@ -71,4 +73,5 @@ internal fun Action.getActionDescription(context: Context, parent: Event, inErro
     is Notification -> getDescription(context, inError)
     is SystemAction -> getDescription(context, inError)
     is SetText -> getDescription(context, inError)
+    is SetVariable -> "Definir variável: ${variableName}"
 }

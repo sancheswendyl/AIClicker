@@ -36,6 +36,7 @@ import com.buzbuz.smartautoclicker.core.domain.model.action.Intent
 import com.buzbuz.smartautoclicker.core.domain.model.action.Notification
 import com.buzbuz.smartautoclicker.core.domain.model.action.Pause
 import com.buzbuz.smartautoclicker.core.domain.model.action.SetText
+import com.buzbuz.smartautoclicker.core.domain.model.action.SetVariable
 import com.buzbuz.smartautoclicker.core.domain.model.action.Swipe
 import com.buzbuz.smartautoclicker.core.domain.model.action.SystemAction
 import com.buzbuz.smartautoclicker.core.domain.model.action.ToggleEvent
@@ -348,6 +349,17 @@ class EditedItemsBuilder internal constructor(
             priority = 0,
         )
 
+    fun createNewSetVariable(context: Context): SetVariable =
+        SetVariable(
+            id = actionsIdCreator.generateNewIdentifier(),
+            eventId = getEditedEventIdOrThrow(),
+            name = defaultValues.actionName(context),
+            priority = 0,
+            variableName = "",
+            variableType = com.buzbuz.smartautoclicker.core.domain.model.VariableType.NUMBER,
+            operation = com.buzbuz.smartautoclicker.core.domain.model.VariableOperation.SET,
+        )
+
     fun createNewActionFrom(from: Action, eventId: Identifier = getEditedEventIdOrThrow()): Action = when (from) {
         is Click -> createNewClickFrom(from, eventId)
         is Swipe -> createNewSwipeFrom(from, eventId)
@@ -358,7 +370,15 @@ class EditedItemsBuilder internal constructor(
         is Notification -> createNewNotificationFrom(from, eventId)
         is SystemAction -> createNewSystemActionFrom(from, eventId)
         is SetText -> createNewSetTextFrom(from, eventId)
+        is SetVariable -> createNewSetVariableFrom(from, eventId)
     }
+
+    private fun createNewSetVariableFrom(from: SetVariable, eventId: Identifier): SetVariable =
+        from.copy(
+            id = actionsIdCreator.generateNewIdentifier(),
+            eventId = eventId,
+            name = "" + from.name,
+        )
 
     private fun createNewClickFrom(from: Click, eventId: Identifier): Click {
         val conditionId =
