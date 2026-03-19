@@ -18,7 +18,6 @@ package com.buzbuz.smartautoclicker.core.database
 
 import androidx.room.RoomDatabase
 import com.buzbuz.smartautoclicker.core.database.dao.ActionDao
-import com.buzbuz.smartautoclicker.core.database.dao.VariableDao
 import com.buzbuz.smartautoclicker.core.database.dao.ConditionDao
 import com.buzbuz.smartautoclicker.core.database.dao.EventDao
 import com.buzbuz.smartautoclicker.core.database.dao.ScenarioDao
@@ -33,7 +32,5 @@ abstract class ScenarioDatabase : RoomDatabase() {
     abstract fun conditionDao(): ConditionDao
     /** The data access object for the actions in the database. */
     abstract fun actionDao(): ActionDao
-    /** The data access object for the variables in the database. */
-    abstract fun variableDao(): VariableDao
 
 }

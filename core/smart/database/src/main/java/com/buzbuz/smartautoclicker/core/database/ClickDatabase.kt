@@ -27,6 +27,7 @@ import com.buzbuz.smartautoclicker.core.database.entity.IntentExtraEntity
 import com.buzbuz.smartautoclicker.core.database.entity.ScenarioEntity
 import com.buzbuz.smartautoclicker.core.database.entity.ScenarioStatsEntity
 import com.buzbuz.smartautoclicker.core.database.entity.VariableEntity
+import com.buzbuz.smartautoclicker.core.database.dao.VariableDao
 import com.buzbuz.smartautoclicker.core.database.migrations.*
 import androidx.room.RoomDatabase
 
@@ -58,6 +59,8 @@ import javax.inject.Singleton
     ]
 )
 abstract class ClickDatabase : ScenarioDatabase() {
+
+    abstract fun variableDao(): VariableDao
 
     companion object {
         val MANUAL_MIGRATIONS = arrayOf(Migration18to19)
