@@ -75,6 +75,7 @@ class ScenarioDialog(
     private fun setupVariablesTab(dialog: BottomSheetDialog) {
         val tabContainer = buildTabContainer()
         android.util.Log.e("ScenarioDialog", "root type: ${scenarioRoot.javaClass.simpleName}")
+        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()
         scenarioRoot.addView(tabContainer)
     }
 
