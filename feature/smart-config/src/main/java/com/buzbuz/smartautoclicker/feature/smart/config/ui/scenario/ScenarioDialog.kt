@@ -119,14 +119,21 @@ class ScenarioDialog(
             addView(recyclerView)
         }
 
-        val params = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            android.view.Gravity.BOTTOM
-        )
-        tabContainer.layoutParams = params
-        (dialog.window?.decorView?.findViewById<FrameLayout>(com.google.android.material.R.id.container))
-            ?.addView(tabContainer)
+        // Adicionar no LinearLayout base do NavBarDialog (dialog_base_nav_bar.xml)
+        val baseLayout = dialog.window?.decorView
+            ?.findViewById<FrameLayout>(com.google.android.material.R.id.container)
+            ?.getChildAt(0) // CoordinatorLayout
+            ?.let { it as? android.view.ViewGroup }
+            ?.getChildAt(0) // FrameLayout do BottomSheet
+            ?.let { it as? android.view.ViewGroup }
+            ?.getChildAt(0) // LinearLayout (dialog_base_nav_bar)
+            ?.let { it as? LinearLayout }
+
+        if (baseLayout != null) {
+            // Inserir antes do último item (navBar)
+            val insertIndex = baseLayout.childCount - 1
+            baseLayout.addView(tabContainer, if (insertIndex > 0) insertIndex else baseLayout.childCount)
+        }
 
         variablesManager = VariablesManager(
             context = context,
