@@ -67,6 +67,7 @@ class ScenarioDialog(
     override fun onCreateView(): ViewGroup {
         return super.onCreateView().also { root ->
             scenarioRoot = root
+            android.widget.Toast.makeText(context, "onCreateView called!", android.widget.Toast.LENGTH_LONG).show()
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
         }
@@ -74,7 +75,8 @@ class ScenarioDialog(
 
     private fun setupVariablesTab(dialog: BottomSheetDialog) {
         val tabContainer = buildTabContainer()
-        android.util.Log.e("ScenarioDialog", "root type: ${scenarioRoot.javaClass.simpleName}")        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()
+        android.util.Log.e("ScenarioDialog", "root type: ${scenarioRoot.javaClass.simpleName}")
+        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()
         android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()
         scenarioRoot.addView(tabContainer)
     }
