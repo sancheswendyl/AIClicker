@@ -161,6 +161,7 @@ class ScenarioDialog(
 
     override fun onResume() {
         super.onResume()
+        android.widget.Toast.makeText(context, "ScenarioDialog onResume!", android.widget.Toast.LENGTH_LONG).show()
         viewModel.monitorViews(
             createEventButton = createCopyButtons.buttonNew,
             saveButton = topBarBinding.buttonSave,
