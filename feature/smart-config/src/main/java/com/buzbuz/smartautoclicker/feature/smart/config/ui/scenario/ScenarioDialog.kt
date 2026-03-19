@@ -65,11 +65,11 @@ class ScenarioDialog(
         return super.onCreateView().also { root ->
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
-            setupVariablesTab(root as LinearLayout)
+            setupVariablesTab(root)
         }
     }
 
-    private fun setupVariablesTab(root: LinearLayout) {
+    private fun setupVariablesTab(root: ViewGroup) {
         val btnTab = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
@@ -119,6 +119,12 @@ class ScenarioDialog(
             addView(recyclerView)
         }
 
+        val params = android.widget.FrameLayout.LayoutParams(
+            android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+            android.view.Gravity.BOTTOM
+        )
+        tabContainer.layoutParams = params
         root.addView(tabContainer)
 
         variablesManager = VariablesManager(
