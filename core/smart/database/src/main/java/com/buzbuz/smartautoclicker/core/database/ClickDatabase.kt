@@ -26,6 +26,7 @@ import com.buzbuz.smartautoclicker.core.database.entity.EventToggleEntity
 import com.buzbuz.smartautoclicker.core.database.entity.IntentExtraEntity
 import com.buzbuz.smartautoclicker.core.database.entity.ScenarioEntity
 import com.buzbuz.smartautoclicker.core.database.entity.ScenarioStatsEntity
+import com.buzbuz.smartautoclicker.core.database.entity.VariableEntity
 import com.buzbuz.smartautoclicker.core.database.migrations.*
 import androidx.room.RoomDatabase
 
@@ -41,6 +42,7 @@ import javax.inject.Singleton
         IntentExtraEntity::class,
         EventToggleEntity::class,
         ScenarioStatsEntity::class,
+        VariableEntity::class,
     ],
     version = CLICK_DATABASE_VERSION,
     exportSchema = true,
@@ -63,4 +65,4 @@ abstract class ClickDatabase : ScenarioDatabase() {
 }
 
 /** Current version of the database. */
-const val CLICK_DATABASE_VERSION = 19
+const val CLICK_DATABASE_VERSION = 20

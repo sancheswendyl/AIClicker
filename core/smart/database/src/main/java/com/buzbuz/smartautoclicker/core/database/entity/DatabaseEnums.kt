@@ -164,6 +164,25 @@ enum class IntentExtraType {
     STRING
 }
 
+/** Type of variable for procedures. */
+enum class VariableType {
+    /** A numeric integer variable. */
+    NUMBER,
+    /** A boolean variable (true/false). */
+    BOOLEAN,
+    /** A text string variable. */
+    TEXT,
+}
+
+/** Operation to apply to a variable in SetVariable action. */
+enum class VariableOperationType {
+    SET,
+    ADD,
+    MINUS,
+    TOGGLE,
+    APPEND,
+}
+
 /** The list of supported system actions. */
 enum class SystemActionType {
     /** Execute the Android back action. */

@@ -31,6 +31,7 @@ import com.buzbuz.smartautoclicker.core.database.migrations.Migration5to6
 import com.buzbuz.smartautoclicker.core.database.migrations.Migration6to7
 import com.buzbuz.smartautoclicker.core.database.migrations.Migration9to10
 import com.buzbuz.smartautoclicker.core.database.migrations.Migration18to19
+import com.buzbuz.smartautoclicker.core.database.migrations.Migration19to20
 
 import dagger.Module
 import dagger.Provides
@@ -62,6 +63,7 @@ internal object SmartDatabaseModule {
             Migration10to11,
             Migration12to13,
             Migration18to19,
+            Migration19to20,
         ).build()
 
     @Provides
@@ -77,5 +79,6 @@ internal object SmartDatabaseModule {
             Migration10to11,
             Migration12to13,
             Migration18to19,
+            Migration19to20,
         ).build()
 }

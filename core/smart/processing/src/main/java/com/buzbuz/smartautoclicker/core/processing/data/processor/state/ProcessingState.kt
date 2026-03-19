@@ -19,6 +19,9 @@ package com.buzbuz.smartautoclicker.core.processing.data.processor.state
 import android.content.Context
 
 import com.buzbuz.smartautoclicker.core.domain.model.condition.TriggerCondition
+import com.buzbuz.smartautoclicker.core.domain.model.Variable
+import com.buzbuz.smartautoclicker.core.domain.model.VariableOperation
+import com.buzbuz.smartautoclicker.core.domain.model.VariableComparisonOperation
 import com.buzbuz.smartautoclicker.core.domain.model.event.Event
 import com.buzbuz.smartautoclicker.core.domain.model.event.ImageEvent
 import com.buzbuz.smartautoclicker.core.domain.model.event.TriggerEvent
@@ -33,7 +36,8 @@ internal class ProcessingState(
     private val countersState: CountersState = CountersState(imageEvents, triggerEvents, progressListener),
     private val timersState: TimersState = TimersState(triggerEvents),
     private val timeOfDayState: TimeOfDayState = TimeOfDayState(),
-) : IBroadcastsState by broadcastsState, ICountersState by countersState, ITimersState by timersState, ITimeOfDayState by timeOfDayState, IEventsState by eventsState {
+    private val variablesState: VariablesState = VariablesState(),
+) : IBroadcastsState by broadcastsState, ICountersState by countersState, ITimersState by timersState, ITimeOfDayState by timeOfDayState, IVariablesState by variablesState, IEventsState by eventsState {
 
     init {
         eventsState.setEventStateListener(object : EventStateListener {
@@ -50,6 +54,7 @@ internal class ProcessingState(
     fun onProcessingStopped() {
         broadcastsState.onProcessingStopped()
         timersState.onProcessingStopped()
+        variablesState.clearAll()
     }
 
     fun clearIterationState() {
