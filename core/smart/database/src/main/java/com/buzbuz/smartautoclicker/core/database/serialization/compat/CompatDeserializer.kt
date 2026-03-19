@@ -369,6 +369,7 @@ internal open class CompatDeserializer : Deserializer {
             ActionType.NOTIFICATION -> deserializeActionNotification(jsonAction)
             ActionType.SYSTEM -> deserializeActionSystem(jsonAction)
             ActionType.TEXT -> deserializeActionSetText(jsonAction)
+            ActionType.SET_VARIABLE -> null
             null -> null
         }
 
