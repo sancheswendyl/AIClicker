@@ -104,4 +104,11 @@ sealed class ActionTypeChoice(
         R.string.item_set_text_desc,
         getSetTextIconRes(),
     )
+
+    /** Set Variable Action choice. */
+    data object SetVariable : ActionTypeChoice(
+        R.string.dialog_title_set_variable,
+        R.string.field_variable_name_label,
+        getSetTextIconRes(),
+    )
 }
