@@ -116,8 +116,11 @@ class EventDialogViewModel @Inject constructor(
         actionsState.value?.toActionsChildrenItem()
     }
 
-    val scenarioVariables: Flow<List<Variable>> = editionRepository.editionState
-        .editedScenarioVariables
+    val scenarioVariables: Flow<List<Variable>> = editionRepository.editionState.editedScenarioVariables
+
+    fun updateVariables(variables: List<Variable>) {
+        editionRepository.editionState.updateScenarioVariables(variables)
+    }
 
     val eventEnabledOnStart: Flow<Boolean> = configuredEvent
         .map { event -> event.enabledOnStart }

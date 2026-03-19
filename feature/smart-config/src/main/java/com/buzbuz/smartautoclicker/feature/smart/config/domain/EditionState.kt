@@ -43,6 +43,8 @@ import com.buzbuz.smartautoclicker.feature.smart.config.domain.model.IEditionSta
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import com.buzbuz.smartautoclicker.core.domain.model.Variable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
@@ -73,7 +75,12 @@ internal class EditionState internal constructor(
             )
         }
 
-    override val editedScenarioVariables: Flow<List<Variable>> = flowOf(emptyList())
+    private val _editedScenarioVariables = MutableStateFlow<List<Variable>>(emptyList())
+    override val editedScenarioVariables: Flow<List<Variable>> = _editedScenarioVariables.asStateFlow()
+
+    override fun updateScenarioVariables(variables: List<Variable>) {
+        _editedScenarioVariables.value = variables
+    }
 
     override val scenarioState: Flow<EditedElementState<Scenario>> =
         editor.editedScenarioState

@@ -37,6 +37,7 @@ interface IEditionState {
     val scenarioCompleteState: Flow<EditedElementState<EditedScenarioState>>
     val scenarioState: Flow<EditedElementState<Scenario>>
     val editedScenarioVariables: Flow<List<Variable>>
+    fun updateScenarioVariables(variables: List<Variable>)
 
     // Edited Scenario child items (ImageEvents and TriggerEvents)
     val allEditedEvents: Flow<List<Event>>

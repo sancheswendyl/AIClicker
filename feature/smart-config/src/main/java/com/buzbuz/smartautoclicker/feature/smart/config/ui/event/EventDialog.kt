@@ -60,7 +60,7 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.Tri
 import com.buzbuz.smartautoclicker.feature.smart.debugging.ui.dialog.live.eventtry.TryEventOverlayMenu
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables.VariablesAdapter
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables.VariablesManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import kotlinx.coroutines.launch
@@ -78,8 +78,7 @@ class EventDialog(
     )
 
     private lateinit var viewBinding: DialogEventConfigBinding
-    private val variablesAdapter = VariablesAdapter()
-    private var isVariablesExpanded = false
+    private var variablesManager: VariablesManager? = null
 
     override fun onCreateView(): ViewGroup {
         viewBinding = DialogEventConfigBinding.inflate(LayoutInflater.from(context)).apply {
@@ -251,7 +250,7 @@ class EventDialog(
                 launch { viewModel.isImageEvent.collect(::updateImageEventSpecificViewsVisibility) }
                 launch { viewModel.canTryEvent.collect(::updateTryFieldEnabledState) }
                 launch { viewModel.actionsDescriptions.collect(viewBinding.fieldActionsSelector::setItems) }
-                launch { viewModel.scenarioVariables.collect(::updateVariablesList) }
+                launch { viewModel.scenarioVariables.collect { variablesManager?.updateVariables(it) } }
 
                 if (viewModel.isConfiguringScreenEvent()) {
                     launch { viewModel.imageConditions.collect(::updateImageConditionsField) }
@@ -298,22 +297,14 @@ class EventDialog(
     }
 
     private fun DialogEventConfigBinding.setupVariablesTab() {
-        listVariables.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = variablesAdapter
-        }
-        btnVariablesTab.setOnClickListener {
-            isVariablesExpanded = !isVariablesExpanded
-            listVariables.visibility = if (isVariablesExpanded) View.VISIBLE else View.GONE
-            iconVariablesTab.setImageResource(
-                if (isVariablesExpanded) R.drawable.ic_chevron_down
-                else R.drawable.ic_chevron_up
-            )
-        }
-    }
-
-    private fun updateVariablesList(variables: List<com.buzbuz.smartautoclicker.core.domain.model.Variable>) {
-        variablesAdapter.submitList(variables)
+        variablesManager = VariablesManager(
+            context = context,
+            btnTab = btnVariablesTab,
+            iconTab = iconVariablesTab,
+            recyclerView = listVariables,
+            onVariablesChanged = { viewModel.updateVariables(it) },
+        )
+        btnAddVariable.setOnClickListener { variablesManager?.addVariable() }
     }
 
     private fun updateSaveButton(enabled: Boolean) {
