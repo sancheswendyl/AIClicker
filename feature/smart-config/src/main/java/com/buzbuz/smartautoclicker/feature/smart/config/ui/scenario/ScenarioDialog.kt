@@ -19,34 +19,29 @@ package com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-
-import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.DialogNavigationButton
-import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.setButtonEnabledState
+import androidx.recyclerview.widget.RecyclerView
 import com.buzbuz.smartautoclicker.core.common.overlays.base.viewModels
 import com.buzbuz.smartautoclicker.core.common.overlays.dialog.implementation.navbar.NavBarDialog
 import com.buzbuz.smartautoclicker.core.common.overlays.dialog.implementation.navbar.NavBarDialogContent
+import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.DialogNavigationButton
+import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.setButtonEnabledState
 import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.setButtonVisibility
 import com.buzbuz.smartautoclicker.feature.smart.config.R
 import com.buzbuz.smartautoclicker.feature.smart.config.di.ScenarioConfigViewModelsEntryPoint
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.common.dialogs.showCloseWithoutSavingDialog
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables.VariablesManager
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.config.ScenarioConfigContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.imageevents.ImageEventListContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListContent
-
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables.VariablesManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationBarView
-
 import kotlinx.coroutines.launch
 
 class ScenarioDialog(
@@ -55,33 +50,22 @@ class ScenarioDialog(
 ) : NavBarDialog(R.style.ScenarioConfigTheme) {
 
     private var variablesManager: VariablesManager? = null
+    private lateinit var scenarioRoot: ViewGroup
 
-    /** The view model for this dialog. */
     private val viewModel: ScenarioDialogViewModel by viewModels(
         entryPoint = ScenarioConfigViewModelsEntryPoint::class.java,
         creator = { scenarioDialogViewModel() },
     )
 
-    private lateinit var scenarioRoot: ViewGroup
-
     override fun onCreateView(): ViewGroup {
         return super.onCreateView().also { root ->
             scenarioRoot = root
-            android.widget.Toast.makeText(context, "onCreateView called!", android.widget.Toast.LENGTH_LONG).show()
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
         }
     }
 
-    private fun setupVariablesTab(dialog: BottomSheetDialog) {
-        val tabContainer = buildTabContainer()
-        android.util.Log.e("ScenarioDialog", "root type: ${scenarioRoot.javaClass.simpleName}")
-        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()
-        android.widget.Toast.makeText(context, "Variables tab: ${scenarioRoot.javaClass.simpleName}", android.widget.Toast.LENGTH_LONG).show()
-        scenarioRoot.addView(tabContainer)
-    }
-
-    private fun buildTabContainer(): LinearLayout {
+    private fun setupVariablesTab() {
         val iconTab = ImageView(context).apply {
             setImageResource(R.drawable.ic_chevron_up)
             layoutParams = LinearLayout.LayoutParams(60, 60)
@@ -122,16 +106,7 @@ class ScenarioDialog(
             setPadding(16, 8, 16, 8)
         }
 
-        variablesManager = VariablesManager(
-            context = context,
-            overlayManager = overlayManager,
-            btnTab = btnTab,
-            iconTab = iconTab,
-            recyclerView = recyclerView,
-            onVariablesChanged = { viewModel.updateVariables(it) },
-        )
-
-        return LinearLayout(context).apply {
+        val tabContainer = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1E1E2E.toInt())
             layoutParams = LinearLayout.LayoutParams(
@@ -141,9 +116,20 @@ class ScenarioDialog(
             addView(btnTab)
             addView(recyclerView)
         }
+
+        variablesManager = VariablesManager(
+            context = context,
+            overlayManager = overlayManager,
+            btnTab = btnTab,
+            iconTab = iconTab,
+            recyclerView = recyclerView,
+            onVariablesChanged = { viewModel.updateVariables(it) },
+        )
+
+        scenarioRoot.addView(tabContainer)
     }
 
-        override fun inflateMenu(navBarView: NavigationBarView) {
+    override fun inflateMenu(navBarView: NavigationBarView) {
         navBarView.inflateMenu(R.menu.menu_scenario_config)
     }
 
@@ -157,7 +143,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        setupVariablesTab(dialog)
+        setupVariablesTab()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -192,12 +178,10 @@ class ScenarioDialog(
                 onConfigSaved()
                 super.back()
             }
-
             DialogNavigationButton.DISMISS -> {
                 back()
                 return
             }
-
             DialogNavigationButton.DELETE -> Unit
         }
     }
@@ -210,7 +194,6 @@ class ScenarioDialog(
             }
             return
         }
-
         onConfigDiscarded()
         super.back()
     }
