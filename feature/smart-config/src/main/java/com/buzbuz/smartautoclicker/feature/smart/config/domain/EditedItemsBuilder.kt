@@ -353,7 +353,7 @@ class EditedItemsBuilder internal constructor(
         SetVariable(
             id = actionsIdCreator.generateNewIdentifier(),
             eventId = getEditedEventIdOrThrow(),
-            name = defaultValues.actionName(context),
+            name = defaultValues.changeCounterName(context),
             priority = 0,
             variableName = "",
             variableType = com.buzbuz.smartautoclicker.core.domain.model.VariableType.NUMBER,
