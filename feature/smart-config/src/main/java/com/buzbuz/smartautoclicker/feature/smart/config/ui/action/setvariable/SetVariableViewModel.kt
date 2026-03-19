@@ -30,6 +30,25 @@ class SetVariableViewModel @Inject constructor(
     private val editionRepository: EditionRepository,
 ) : ViewModel() {
 
+    // DropdownItems para tipo
+    val typeNumberItem = DropdownItem(R.string.variable_type_number)
+    val typeBooleanItem = DropdownItem(R.string.variable_type_boolean)
+    val typeTextItem = DropdownItem(R.string.variable_type_text)
+
+    // DropdownItems para operação
+    val opSetItem = DropdownItem(R.string.variable_operation_set)
+    val opAddItem = DropdownItem(R.string.variable_operation_add)
+    val opMinusItem = DropdownItem(R.string.variable_operation_minus)
+    val opToggleItem = DropdownItem(R.string.variable_operation_toggle)
+    val opAppendItem = DropdownItem(R.string.variable_operation_append)
+
+    // DropdownItems para valor booleano
+    val boolTrueItem = DropdownItem(R.string.variable_value_true)
+    val boolFalseItem = DropdownItem(R.string.variable_value_false)
+
+    val variableTypeItems = listOf(typeNumberItem, typeBooleanItem, typeTextItem)
+    val booleanValueItems = listOf(boolTrueItem, boolFalseItem)
+
     private val configuredAction: Flow<SetVariable> =
         editionRepository.editionState.editedActionState
             .mapNotNull { it.value }
@@ -46,56 +65,74 @@ class SetVariableViewModel @Inject constructor(
 
     val name: Flow<String?> = configuredAction.map { it.name }.take(1)
     val nameError: Flow<Boolean> = configuredAction.map { it.name.isNullOrEmpty() }
-    val variableName: Flow<String> = configuredAction.map { it.variableName }
+    val variableName: Flow<String?> = configuredAction.map { it.variableName }.take(1)
     val variableNameError: Flow<Boolean> = configuredAction.map { it.variableName.isEmpty() }
+    val valueNumber: Flow<String?> = configuredAction.map { it.valueNumber.toString() }.take(1)
+    val valueText: Flow<String?> = configuredAction.map { it.valueText }.take(1)
+    val isValidAction: Flow<Boolean> = editionRepository.editionState.editedActionState.map { it.canBeSaved }
+
+    val selectedTypeItem: Flow<DropdownItem> = configuredAction.map { action ->
+        when (action.variableType) {
+            VariableType.NUMBER -> typeNumberItem
+            VariableType.BOOLEAN -> typeBooleanItem
+            VariableType.TEXT -> typeTextItem
+        }
+    }
+
+    val operationItems: Flow<List<DropdownItem>> = configuredAction.map { action ->
+        when (action.variableType) {
+            VariableType.NUMBER -> listOf(opSetItem, opAddItem, opMinusItem)
+            VariableType.BOOLEAN -> listOf(opSetItem, opToggleItem)
+            VariableType.TEXT -> listOf(opSetItem, opAppendItem)
+        }
+    }
+
+    val selectedOperationItem: Flow<DropdownItem> = configuredAction.map { action ->
+        when (action.operation) {
+            VariableOperation.SET -> opSetItem
+            VariableOperation.ADD -> opAddItem
+            VariableOperation.MINUS -> opMinusItem
+            VariableOperation.TOGGLE -> opToggleItem
+            VariableOperation.APPEND -> opAppendItem
+        }
+    }
+
+    val selectedBooleanItem: Flow<DropdownItem> = configuredAction.map { action ->
+        if (action.valueBoolean) boolTrueItem else boolFalseItem
+    }
+
     val variableType: Flow<VariableType> = configuredAction.map { it.variableType }
-    val operation: Flow<VariableOperation> = configuredAction.map { it.operation }
-    val valueNumber: Flow<Int> = configuredAction.map { it.valueNumber }
-    val valueBoolean: Flow<Boolean> = configuredAction.map { it.valueBoolean }
-    val valueText: Flow<String> = configuredAction.map { it.valueText }
-    val isValidAction: Flow<Boolean> = editionRepository.editionState.editedActionState
-        .map { it.canBeSaved }
-
-    // Dropdown items para tipo de variável
-    val variableTypeItems = listOf(
-        DropdownItem(title = R.string.variable_type_number),
-        DropdownItem(title = R.string.variable_type_boolean),
-        DropdownItem(title = R.string.variable_type_text),
-    )
-
-    // Dropdown items para operação numérica
-    val numberOperationItems = listOf(
-        DropdownItem(title = R.string.variable_operation_set),
-        DropdownItem(title = R.string.variable_operation_add),
-        DropdownItem(title = R.string.variable_operation_minus),
-    )
-
-    // Dropdown items para operação booleana
-    val booleanOperationItems = listOf(
-        DropdownItem(title = R.string.variable_operation_set),
-        DropdownItem(title = R.string.variable_operation_toggle),
-    )
-
-    // Dropdown items para operação texto
-    val textOperationItems = listOf(
-        DropdownItem(title = R.string.variable_operation_set),
-        DropdownItem(title = R.string.variable_operation_append),
-    )
-
-    // Dropdown items para valor booleano
-    val booleanValueItems = listOf(
-        DropdownItem(title = R.string.variable_value_true),
-        DropdownItem(title = R.string.variable_value_false),
-    )
 
     fun hasUnsavedModifications(): Boolean = editedActionHasChanged.value
 
     fun setName(name: String) = updateAction { it.copy(name = name) }
     fun setVariableName(name: String) = updateAction { it.copy(variableName = name) }
-    fun setVariableType(type: VariableType) = updateAction { it.copy(variableType = type, operation = VariableOperation.SET) }
-    fun setOperation(operation: VariableOperation) = updateAction { it.copy(operation = operation) }
+
+    fun setTypeItem(item: DropdownItem) {
+        val type = when (item) {
+            typeNumberItem -> VariableType.NUMBER
+            typeBooleanItem -> VariableType.BOOLEAN
+            else -> VariableType.TEXT
+        }
+        updateAction { it.copy(variableType = type, operation = VariableOperation.SET) }
+    }
+
+    fun setOperationItem(item: DropdownItem) {
+        val op = when (item) {
+            opAddItem -> VariableOperation.ADD
+            opMinusItem -> VariableOperation.MINUS
+            opToggleItem -> VariableOperation.TOGGLE
+            opAppendItem -> VariableOperation.APPEND
+            else -> VariableOperation.SET
+        }
+        updateAction { it.copy(operation = op) }
+    }
+
+    fun setBooleanItem(item: DropdownItem) {
+        updateAction { it.copy(valueBoolean = item == boolTrueItem) }
+    }
+
     fun setValueNumber(value: Int) = updateAction { it.copy(valueNumber = value) }
-    fun setValueBoolean(value: Boolean) = updateAction { it.copy(valueBoolean = value) }
     fun setValueText(value: String) = updateAction { it.copy(valueText = value) }
 
     private fun updateAction(closure: (SetVariable) -> SetVariable) {

@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.buzbuz.smartautoclicker.core.common.overlays.base.viewModels
 import com.buzbuz.smartautoclicker.core.common.overlays.dialog.OverlayDialog
-import com.buzbuz.smartautoclicker.core.domain.model.VariableOperation
 import com.buzbuz.smartautoclicker.core.domain.model.VariableType
 import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.DialogNavigationButton
 import com.buzbuz.smartautoclicker.core.ui.bindings.dialogs.setButtonEnabledState
@@ -85,34 +84,20 @@ class SetVariableDialog(
             fieldVariableType.setItems(
                 label = context.getString(R.string.field_variable_type_label),
                 items = viewModel.variableTypeItems,
-                onItemSelected = { item ->
-                    val type = when (viewModel.variableTypeItems.indexOf(item)) {
-                        0 -> VariableType.NUMBER
-                        1 -> VariableType.BOOLEAN
-                        else -> VariableType.TEXT
-                    }
-                    viewModel.setVariableType(type)
-                },
+                onItemSelected = viewModel::setTypeItem,
             )
 
             fieldOperation.setItems(
                 label = context.getString(R.string.field_variable_operation_label),
-                items = viewModel.numberOperationItems,
-                onItemSelected = { item ->
-                    val op = when (viewModel.numberOperationItems.indexOf(item)) {
-                        0 -> VariableOperation.SET
-                        1 -> VariableOperation.ADD
-                        else -> VariableOperation.MINUS
-                    }
-                    viewModel.setOperation(op)
-                },
+                items = listOf(viewModel.opSetItem),
+                onItemSelected = viewModel::setOperationItem,
             )
 
             fieldValueNumber.apply {
                 setLabel(R.string.field_variable_value_label)
                 textField.filters = arrayOf(MinMaxInputFilter(Int.MIN_VALUE, Int.MAX_VALUE))
                 setOnTextChangedListener {
-                    viewModel.setValueNumber(if (it.isNotEmpty()) it.toString().toIntOrNull() ?: 0 else 0)
+                    viewModel.setValueNumber(it.toString().toIntOrNull() ?: 0)
                 }
             }
             hideSoftInputOnFocusLoss(fieldValueNumber.textField)
@@ -120,9 +105,7 @@ class SetVariableDialog(
             fieldValueBoolean.setItems(
                 label = context.getString(R.string.field_variable_value_label),
                 items = viewModel.booleanValueItems,
-                onItemSelected = { item ->
-                    viewModel.setValueBoolean(viewModel.booleanValueItems.indexOf(item) == 0)
-                },
+                onItemSelected = viewModel::setBooleanItem,
             )
 
             fieldValueText.apply {
@@ -147,9 +130,19 @@ class SetVariableDialog(
                 launch { viewModel.nameError.collect(viewBinding.fieldName::setError) }
                 launch { viewModel.variableName.collect(viewBinding.fieldVariableName::setText) }
                 launch { viewModel.variableNameError.collect(viewBinding.fieldVariableName::setError) }
-                launch { viewModel.variableType.collect(::updateVariableTypeUi) }
-                launch { viewModel.valueNumber.collect(::updateNumberValue) }
+                launch { viewModel.selectedTypeItem.collect(viewBinding.fieldVariableType::setSelectedItem) }
+                launch { viewModel.operationItems.collect { items ->
+                    viewBinding.fieldOperation.setItems(
+                        label = context.getString(R.string.field_variable_operation_label),
+                        items = items,
+                        onItemSelected = viewModel::setOperationItem,
+                    )
+                }}
+                launch { viewModel.selectedOperationItem.collect(viewBinding.fieldOperation::setSelectedItem) }
+                launch { viewModel.variableType.collect(::updateValueFieldsVisibility) }
+                launch { viewModel.valueNumber.collect { viewBinding.fieldValueNumber.setText(it, InputType.TYPE_CLASS_NUMBER) } }
                 launch { viewModel.valueText.collect(viewBinding.fieldValueText::setText) }
+                launch { viewModel.selectedBooleanItem.collect(viewBinding.fieldValueBoolean::setSelectedItem) }
                 launch { viewModel.isValidAction.collect(::updateSaveButton) }
             }
         }
@@ -167,16 +160,12 @@ class SetVariableDialog(
         super.back()
     }
 
-    private fun updateVariableTypeUi(type: VariableType) {
+    private fun updateValueFieldsVisibility(type: VariableType) {
         viewBinding.apply {
             fieldValueNumber.root.visibility = if (type == VariableType.NUMBER) View.VISIBLE else View.GONE
             fieldValueBoolean.root.visibility = if (type == VariableType.BOOLEAN) View.VISIBLE else View.GONE
             fieldValueText.root.visibility = if (type == VariableType.TEXT) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun updateNumberValue(value: Int) {
-        viewBinding.fieldValueNumber.setText(value.toString(), InputType.TYPE_CLASS_NUMBER)
     }
 
     private fun updateSaveButton(isValid: Boolean) {
