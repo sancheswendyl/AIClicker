@@ -59,8 +59,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.image.brief
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.condition.trigger.TriggerConditionListDialog
 import com.buzbuz.smartautoclicker.feature.smart.debugging.ui.dialog.live.eventtry.TryEventOverlayMenu
 
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables.VariablesManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import kotlinx.coroutines.launch
@@ -78,7 +76,6 @@ class EventDialog(
     )
 
     private lateinit var viewBinding: DialogEventConfigBinding
-    private var variablesManager: VariablesManager? = null
 
     override fun onCreateView(): ViewGroup {
         viewBinding = DialogEventConfigBinding.inflate(LayoutInflater.from(context)).apply {
@@ -86,7 +83,6 @@ class EventDialog(
             setupEventProperties()
             setupActionCard()
             setupConditionsCard()
-            setupVariablesTab()
         }
 
         return viewBinding.root
@@ -250,7 +246,6 @@ class EventDialog(
                 launch { viewModel.isImageEvent.collect(::updateImageEventSpecificViewsVisibility) }
                 launch { viewModel.canTryEvent.collect(::updateTryFieldEnabledState) }
                 launch { viewModel.actionsDescriptions.collect(viewBinding.fieldActionsSelector::setItems) }
-                launch { viewModel.scenarioVariables.collect { variablesManager?.updateVariables(it) } }
 
                 if (viewModel.isConfiguringScreenEvent()) {
                     launch { viewModel.imageConditions.collect(::updateImageConditionsField) }
@@ -294,18 +289,6 @@ class EventDialog(
             Log.e(TAG, "Closing EventDialog because there is no event edited")
             finish()
         }
-    }
-
-    private fun DialogEventConfigBinding.setupVariablesTab() {
-        variablesManager = VariablesManager(
-            context = context,
-            overlayManager = overlayManager,
-            btnTab = btnVariablesTab,
-            iconTab = iconVariablesTab,
-            recyclerView = listVariables,
-            onVariablesChanged = { viewModel.updateVariables(it) },
-        )
-        btnAddVariable.setOnClickListener { variablesManager?.addVariable() }
     }
 
     private fun updateSaveButton(enabled: Boolean) {

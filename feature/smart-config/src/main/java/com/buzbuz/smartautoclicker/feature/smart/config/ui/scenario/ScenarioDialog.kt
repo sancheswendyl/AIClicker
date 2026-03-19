@@ -38,6 +38,11 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.imageevents.
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListContent
 
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables.VariablesManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationBarView
 
@@ -48,6 +53,8 @@ class ScenarioDialog(
     private val onConfigDiscarded: () -> Unit,
 ) : NavBarDialog(R.style.ScenarioConfigTheme) {
 
+    private var variablesManager: VariablesManager? = null
+
     /** The view model for this dialog. */
     private val viewModel: ScenarioDialogViewModel by viewModels(
         entryPoint = ScenarioConfigViewModelsEntryPoint::class.java,
@@ -55,10 +62,73 @@ class ScenarioDialog(
     )
 
     override fun onCreateView(): ViewGroup {
-        return super.onCreateView().also {
+        return super.onCreateView().also { root ->
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
+            setupVariablesTab(root as LinearLayout)
         }
+    }
+
+    private fun setupVariablesTab(root: LinearLayout) {
+        val btnTab = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(48, 0, 48, 0)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 120
+            )
+            setBackgroundColor(context.getColor(android.R.color.transparent))
+            clickable = true
+            focusable = true
+        }
+
+        val tabText = TextView(context).apply {
+            text = context.getString(R.string.variables_tab_title)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        }
+
+        val btnAdd = android.widget.ImageButton(context).apply {
+            setImageResource(R.drawable.ic_add)
+            background = null
+            layoutParams = LinearLayout.LayoutParams(80, 80).apply { marginEnd = 16 }
+            setOnClickListener { variablesManager?.addVariable() }
+        }
+
+        val iconTab = ImageView(context).apply {
+            setImageResource(R.drawable.ic_chevron_up)
+            layoutParams = LinearLayout.LayoutParams(60, 60)
+        }
+
+        btnTab.addView(tabText)
+        btnTab.addView(btnAdd)
+        btnTab.addView(iconTab)
+
+        val recyclerView = RecyclerView(context).apply {
+            visibility = View.GONE
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            setPadding(16, 8, 16, 8)
+        }
+
+        val tabContainer = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(0xFF1E1E2E.toInt())
+            addView(btnTab)
+            addView(recyclerView)
+        }
+
+        root.addView(tabContainer)
+
+        variablesManager = VariablesManager(
+            context = context,
+            overlayManager = overlayManager,
+            btnTab = btnTab,
+            iconTab = iconTab,
+            recyclerView = recyclerView,
+            onVariablesChanged = { viewModel.updateVariables(it) },
+        )
     }
 
     override fun inflateMenu(navBarView: NavigationBarView) {
@@ -85,6 +155,7 @@ class ScenarioDialog(
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.navItemsValidity.collect(::updateContentsValidity) }
                 launch { viewModel.scenarioCanBeSaved.collect(::updateSaveButtonState) }
+                launch { viewModel.scenarioVariables.collect { variablesManager?.updateVariables(it) } }
             }
         }
     }

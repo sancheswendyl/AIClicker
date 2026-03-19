@@ -28,6 +28,7 @@ import com.buzbuz.smartautoclicker.core.ui.monitoring.MonitoredViewType
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.Flow
+import com.buzbuz.smartautoclicker.core.domain.model.Variable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -70,6 +71,12 @@ class ScenarioDialogViewModel @Inject constructor(
 
     /** Tells if the user is currently editing a scenario. If that's not the case, dialog should be closed. */
     val isEditingScenario: Flow<Boolean> = editionRepository.isEditingScenario
+
+    val scenarioVariables: Flow<List<Variable>> = editionRepository.editionState.editedScenarioVariables
+
+    fun updateVariables(variables: List<Variable>) {
+        editionRepository.editionState.updateScenarioVariables(variables)
+    }
         .distinctUntilChanged()
         .debounce(1000)
 
