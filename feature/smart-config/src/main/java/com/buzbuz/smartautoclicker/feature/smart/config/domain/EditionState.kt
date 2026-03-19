@@ -73,7 +73,7 @@ internal class EditionState internal constructor(
             )
         }
 
-    val editedScenarioVariables: Flow<List<Variable>> = flowOf(emptyList())
+    override val editedScenarioVariables: Flow<List<Variable>> = flowOf(emptyList())
 
     override val scenarioState: Flow<EditedElementState<Scenario>> =
         editor.editedScenarioState
