@@ -33,7 +33,7 @@ class VariableEditOverlayDialog(
     private lateinit var valueContainer: LinearLayout
 
     override fun onCreateView(): ViewGroup {
-        val types = arrayOf("Número inteiro (I)", "Booleano (B)", "String de texto (S)")
+        val types = arrayOf("Inteiro (I)", "Booleano (B)", "String (S)")
         val booleanValues = arrayOf("Falso", "Verdadeiro")
 
         nameInput = EditText(context).apply {
