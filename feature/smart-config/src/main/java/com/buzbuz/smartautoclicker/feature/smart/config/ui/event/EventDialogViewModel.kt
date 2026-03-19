@@ -45,6 +45,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import com.buzbuz.smartautoclicker.core.domain.model.Variable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
@@ -114,6 +115,9 @@ class EventDialogViewModel @Inject constructor(
     val actionsDescriptions: Flow<List<EventChildrenItem>> = editionRepository.editionState.editedEventActionsState.mapNotNull { actionsState ->
         actionsState.value?.toActionsChildrenItem()
     }
+
+    val scenarioVariables: Flow<List<Variable>> = editionRepository.editionState
+        .editedScenarioVariables
 
     val eventEnabledOnStart: Flow<Boolean> = configuredEvent
         .map { event -> event.enabledOnStart }

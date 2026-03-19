@@ -42,6 +42,8 @@ import com.buzbuz.smartautoclicker.feature.smart.config.domain.model.IEditionSta
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import com.buzbuz.smartautoclicker.core.domain.model.Variable
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -70,6 +72,8 @@ internal class EditionState internal constructor(
                         && (imageEvents.value.isNotEmpty() || triggerEvents.value.isNotEmpty()),
             )
         }
+
+    val editedScenarioVariables: Flow<List<Variable>> = flowOf(emptyList())
 
     override val scenarioState: Flow<EditedElementState<Scenario>> =
         editor.editedScenarioState

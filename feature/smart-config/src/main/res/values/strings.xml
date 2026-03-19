@@ -448,4 +448,8 @@
     <string name="variable_operation_append">Concatenar</string>
     <string name="variable_value_true">Verdadeiro</string>
     <string name="variable_value_false">Falso</string>
+    <string name="variables_tab_title">Variáveis</string>
+    <string name="variable_type_prefix_number">I</string>
+    <string name="variable_type_prefix_boolean">B</string>
+    <string name="variable_type_prefix_text">S</string>
 </resources>
