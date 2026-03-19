@@ -30,6 +30,9 @@ import com.buzbuz.smartautoclicker.core.domain.model.action.SetText
 import com.buzbuz.smartautoclicker.core.domain.model.action.Swipe
 import com.buzbuz.smartautoclicker.core.domain.model.action.SystemAction
 import com.buzbuz.smartautoclicker.core.domain.model.action.ToggleEvent
+import com.buzbuz.smartautoclicker.core.domain.model.action.SetVariable
+import com.buzbuz.smartautoclicker.core.database.entity.VariableType
+import com.buzbuz.smartautoclicker.core.database.entity.VariableOperationType
 
 
 internal fun Action.toEntity(): ActionEntity {
@@ -45,6 +48,7 @@ internal fun Action.toEntity(): ActionEntity {
         is Notification -> toNotificationEntity()
         is SystemAction -> toSystemActionEntity()
         is SetText -> toSetTextEntity()
+        is SetVariable -> toSetVariableEntity()
     }
 }
 
@@ -151,6 +155,21 @@ private fun SystemAction.toSystemActionEntity(): ActionEntity =
         name = name!!,
         type = ActionType.SYSTEM,
         systemActionType = type.toEntity(),
+    )
+
+private fun SetVariable.toSetVariableEntity(): ActionEntity =
+    ActionEntity(
+        id = id.databaseId,
+        eventId = eventId.databaseId,
+        priority = priority,
+        name = name!!,
+        type = ActionType.SET_VARIABLE,
+        variableName = variableName,
+        variableType = VariableType.valueOf(variableType.name),
+        variableOperation = VariableOperationType.valueOf(operation.name),
+        variableValueNumber = valueNumber,
+        variableValueBoolean = valueBoolean,
+        variableValueText = valueText,
     )
 
 private fun SetText.toSetTextEntity(): ActionEntity =

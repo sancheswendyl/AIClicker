@@ -68,4 +68,4 @@ abstract class ClickDatabase : ScenarioDatabase() {
 }
 
 /** Current version of the database. */
-const val CLICK_DATABASE_VERSION = 20
+const val CLICK_DATABASE_VERSION = 21

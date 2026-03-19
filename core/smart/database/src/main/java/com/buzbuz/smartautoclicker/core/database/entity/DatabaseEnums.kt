@@ -53,6 +53,8 @@ enum class ActionType {
     SYSTEM,
     /** Set the text of a focused view on the screen. */
     TEXT,
+    /** Set the value of a variable. */
+    SET_VARIABLE,
 }
 
 

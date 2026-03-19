@@ -41,6 +41,8 @@ import com.buzbuz.smartautoclicker.core.domain.model.action.Pause
 import com.buzbuz.smartautoclicker.core.domain.model.action.Swipe
 import com.buzbuz.smartautoclicker.core.domain.model.action.ToggleEvent
 import com.buzbuz.smartautoclicker.core.domain.model.action.ChangeCounter
+import com.buzbuz.smartautoclicker.core.domain.model.action.SetVariable
+import com.buzbuz.smartautoclicker.core.domain.model.VariableOperation
 import com.buzbuz.smartautoclicker.core.domain.model.action.Notification
 import com.buzbuz.smartautoclicker.core.domain.model.action.SetText
 import com.buzbuz.smartautoclicker.core.domain.model.action.SystemAction
@@ -101,6 +103,7 @@ internal class ActionExecutor(
                 is Notification -> executeNotification(event, action)
                 is SystemAction -> executeSystemAction(action)
                 is SetText -> executeSetText(action)
+                is SetVariable -> executeSetVariable(action)
             }
         }
     }
@@ -237,6 +240,18 @@ internal class ActionExecutor(
      * Execute the provided change counter.
      * @param changeCounter the changeCounter action to be executed.
      */
+    private fun executeSetVariable(setVariable: SetVariable) {
+        processingState.setVariable(
+            name = setVariable.variableName,
+            value = when (setVariable.variableType) {
+                com.buzbuz.smartautoclicker.core.domain.model.VariableType.NUMBER -> setVariable.valueNumber
+                com.buzbuz.smartautoclicker.core.domain.model.VariableType.BOOLEAN -> setVariable.valueBoolean
+                com.buzbuz.smartautoclicker.core.domain.model.VariableType.TEXT -> setVariable.valueText
+            },
+            operation = setVariable.operation,
+        )
+    }
+
     private fun executeChangeCounter(changeCounter: ChangeCounter) {
         val oldValue = processingState.getCounterValue(changeCounter.counterName) ?: return
 

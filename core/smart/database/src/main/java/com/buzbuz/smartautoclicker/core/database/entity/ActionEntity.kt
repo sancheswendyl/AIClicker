@@ -168,6 +168,14 @@ data class ActionEntity(
     // ActionType.TEXT
     @ColumnInfo(name = "text_value") val textValue: String? = null,
     @ColumnInfo(name = "text_validate_input") val textValidateInput: Boolean? = null,
+
+    // ActionType.SET_VARIABLE
+    @ColumnInfo(name = "variable_name") val variableName: String? = null,
+    @ColumnInfo(name = "variable_type") val variableType: VariableType? = null,
+    @ColumnInfo(name = "variable_operation") val variableOperation: VariableOperationType? = null,
+    @ColumnInfo(name = "variable_value_number") val variableValueNumber: Int? = null,
+    @ColumnInfo(name = "variable_value_boolean") val variableValueBoolean: Boolean? = null,
+    @ColumnInfo(name = "variable_value_text") val variableValueText: String? = null,
 ) : EntityWithId
 
 /**

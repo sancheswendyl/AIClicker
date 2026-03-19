@@ -21,6 +21,9 @@ import com.buzbuz.smartautoclicker.core.domain.model.action.SetText
 import com.buzbuz.smartautoclicker.core.domain.model.action.Swipe
 import com.buzbuz.smartautoclicker.core.domain.model.action.SystemAction
 import com.buzbuz.smartautoclicker.core.domain.model.action.ToggleEvent
+import com.buzbuz.smartautoclicker.core.domain.model.action.SetVariable
+import com.buzbuz.smartautoclicker.core.domain.model.VariableType
+import com.buzbuz.smartautoclicker.core.domain.model.VariableOperation
 import com.buzbuz.smartautoclicker.core.domain.model.action.intent.toDomainIntentExtra
 import com.buzbuz.smartautoclicker.core.domain.model.action.toggleevent.toDomain
 
@@ -35,6 +38,7 @@ internal fun CompleteActionEntity.toDomain(cleanIds: Boolean = false): Action = 
     ActionType.NOTIFICATION -> toDomainNotification(cleanIds)
     ActionType.SYSTEM -> toDomainSystem(cleanIds)
     ActionType.TEXT -> toDomainSetText(cleanIds)
+    ActionType.SET_VARIABLE -> toDomainSetVariable(cleanIds)
 }
 
 private fun CompleteActionEntity.toDomainClick(cleanIds: Boolean = false) = Click(
@@ -133,6 +137,25 @@ private fun CompleteActionEntity.toDomainSetText(cleanIds: Boolean = false) = Se
     text = action.textValue ?: "",
     validateInput = action.textValidateInput ?: false,
 )
+
+private fun CompleteActionEntity.toDomainSetVariable(cleanIds: Boolean = false) = SetVariable(
+    id = Identifier(id = action.id, asTemporary = cleanIds),
+    eventId = Identifier(id = action.eventId, asTemporary = cleanIds),
+    name = action.name,
+    priority = action.priority,
+    variableName = action.variableName ?: "",
+    variableType = action.variableType?.toDomainVariableType() ?: VariableType.NUMBER,
+    operation = action.variableOperation?.toDomainVariableOperation() ?: VariableOperation.SET,
+    valueNumber = action.variableValueNumber ?: 0,
+    valueBoolean = action.variableValueBoolean ?: false,
+    valueText = action.variableValueText ?: "",
+)
+
+private fun com.buzbuz.smartautoclicker.core.database.entity.VariableType.toDomainVariableType(): VariableType =
+    VariableType.valueOf(name)
+
+private fun com.buzbuz.smartautoclicker.core.database.entity.VariableOperationType.toDomainVariableOperation(): VariableOperation =
+    VariableOperation.valueOf(name)
 
 private fun ClickPositionType.toDomain(): Click.PositionType =
     Click.PositionType.valueOf(name)
