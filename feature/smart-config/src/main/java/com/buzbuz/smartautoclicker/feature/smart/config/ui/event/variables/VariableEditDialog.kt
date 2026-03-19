@@ -5,9 +5,8 @@ package com.buzbuz.smartautoclicker.feature.smart.config.ui.event.variables
 
 import android.app.AlertDialog
 import android.content.Context
+import android.view.WindowManager
 import com.buzbuz.smartautoclicker.core.domain.model.Variable
-import com.buzbuz.smartautoclicker.core.domain.model.VariableType
-import com.buzbuz.smartautoclicker.feature.smart.config.R
 
 object VariableEditDialog {
 
@@ -50,10 +49,10 @@ object VariableEditDialog {
             }
             setSelection(selectedType)
             onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                    selectedType = position
+                override fun onItemSelected(p: android.widget.AdapterView<*>?, v: android.view.View?, pos: Int, id: Long) {
+                    selectedType = pos
                 }
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+                override fun onNothingSelected(p: android.widget.AdapterView<*>?) {}
             }
         }
 
@@ -73,7 +72,7 @@ object VariableEditDialog {
             addView(valueInput)
         }
 
-        AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+        val dialog = AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Dialog_Alert)
             .setTitle(if (existing == null) "Nova variável" else "Editar variável")
             .setView(layout)
             .setPositiveButton("OK") { _, _ ->
@@ -89,11 +88,12 @@ object VariableEditDialog {
             }
             .setNegativeButton("Cancelar", null)
             .create()
-            .apply {
-                window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
-                window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
-                window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-            }
-            .show()
+
+        dialog.window?.apply {
+            setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+            clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+            addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        }
+        dialog.show()
     }
 }
