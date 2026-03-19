@@ -62,14 +62,18 @@ class ScenarioDialog(
         creator = { scenarioDialogViewModel() },
     )
 
+    private lateinit var scenarioRoot: ViewGroup
+
     override fun onCreateView(): ViewGroup {
-        return super.onCreateView().also {
+        return super.onCreateView().also { root ->
+            scenarioRoot = root
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
         }
     }
 
     private fun setupVariablesTab(dialog: BottomSheetDialog) {
+        val root = scenarioRoot as? LinearLayout ?: return
         val btnTab = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
@@ -119,21 +123,8 @@ class ScenarioDialog(
             addView(recyclerView)
         }
 
-        // Adicionar no LinearLayout base do NavBarDialog (dialog_base_nav_bar.xml)
-        val baseLayout = dialog.window?.decorView
-            ?.findViewById<FrameLayout>(com.google.android.material.R.id.container)
-            ?.getChildAt(0) // CoordinatorLayout
-            ?.let { it as? android.view.ViewGroup }
-            ?.getChildAt(0) // FrameLayout do BottomSheet
-            ?.let { it as? android.view.ViewGroup }
-            ?.getChildAt(0) // LinearLayout (dialog_base_nav_bar)
-            ?.let { it as? LinearLayout }
-
-        if (baseLayout != null) {
-            // Inserir antes do último item (navBar)
-            val insertIndex = baseLayout.childCount - 1
-            baseLayout.addView(tabContainer, if (insertIndex > 0) insertIndex else baseLayout.childCount)
-        }
+        // Inserir antes do último filho (que seria o navBar adicionado depois)
+        root.addView(tabContainer, root.childCount)
 
         variablesManager = VariablesManager(
             context = context,
