@@ -38,6 +38,7 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.imageevents.
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreContent
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListContent
 
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -62,14 +63,13 @@ class ScenarioDialog(
     )
 
     override fun onCreateView(): ViewGroup {
-        return super.onCreateView().also { root ->
+        return super.onCreateView().also {
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
-            setupVariablesTab(root)
         }
     }
 
-    private fun setupVariablesTab(root: ViewGroup) {
+    private fun setupVariablesTab(dialog: BottomSheetDialog) {
         val btnTab = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
@@ -119,13 +119,14 @@ class ScenarioDialog(
             addView(recyclerView)
         }
 
-        val params = android.widget.FrameLayout.LayoutParams(
-            android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-            android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+        val params = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
             android.view.Gravity.BOTTOM
         )
         tabContainer.layoutParams = params
-        root.addView(tabContainer)
+        (dialog.window?.decorView?.findViewById<FrameLayout>(com.google.android.material.R.id.container))
+            ?.addView(tabContainer)
 
         variablesManager = VariablesManager(
             context = context,
@@ -151,6 +152,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
+        setupVariablesTab(dialog)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
