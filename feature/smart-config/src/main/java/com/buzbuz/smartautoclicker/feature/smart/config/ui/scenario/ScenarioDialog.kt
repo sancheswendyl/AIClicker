@@ -73,22 +73,15 @@ class ScenarioDialog(
     }
 
     private fun setupVariablesTab(dialog: BottomSheetDialog) {
-        val root = scenarioRoot as? LinearLayout ?: return
-        val btnTab = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(48, 0, 48, 0)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 120
-            )
-            setBackgroundColor(context.getColor(android.R.color.transparent))
-            isClickable = true
-            isFocusable = true
-        }
+        val tabContainer = buildTabContainer()
+        android.util.Log.e("ScenarioDialog", "root type: ${scenarioRoot.javaClass.simpleName}")
+        scenarioRoot.addView(tabContainer)
+    }
 
-        val tabText = TextView(context).apply {
-            text = context.getString(R.string.variables_tab_title)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+    private fun buildTabContainer(): LinearLayout {
+        val iconTab = ImageView(context).apply {
+            setImageResource(R.drawable.ic_chevron_up)
+            layoutParams = LinearLayout.LayoutParams(60, 60)
         }
 
         val btnAdd = android.widget.ImageButton(context).apply {
@@ -98,14 +91,24 @@ class ScenarioDialog(
             setOnClickListener { variablesManager?.addVariable() }
         }
 
-        val iconTab = ImageView(context).apply {
-            setImageResource(R.drawable.ic_chevron_up)
-            layoutParams = LinearLayout.LayoutParams(60, 60)
+        val tabText = TextView(context).apply {
+            text = context.getString(R.string.variables_tab_title)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         }
 
-        btnTab.addView(tabText)
-        btnTab.addView(btnAdd)
-        btnTab.addView(iconTab)
+        val btnTab = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            setPadding(48, 0, 48, 0)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 120
+            )
+            isClickable = true
+            isFocusable = true
+            addView(tabText)
+            addView(btnAdd)
+            addView(iconTab)
+        }
 
         val recyclerView = RecyclerView(context).apply {
             visibility = View.GONE
@@ -116,16 +119,6 @@ class ScenarioDialog(
             setPadding(16, 8, 16, 8)
         }
 
-        val tabContainer = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(0xFF1E1E2E.toInt())
-            addView(btnTab)
-            addView(recyclerView)
-        }
-
-        // Inserir antes do último filho (que seria o navBar adicionado depois)
-        root.addView(tabContainer, root.childCount)
-
         variablesManager = VariablesManager(
             context = context,
             overlayManager = overlayManager,
@@ -134,9 +127,20 @@ class ScenarioDialog(
             recyclerView = recyclerView,
             onVariablesChanged = { viewModel.updateVariables(it) },
         )
+
+        return LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(0xFF1E1E2E.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            addView(btnTab)
+            addView(recyclerView)
+        }
     }
 
-    override fun inflateMenu(navBarView: NavigationBarView) {
+        override fun inflateMenu(navBarView: NavigationBarView) {
         navBarView.inflateMenu(R.menu.menu_scenario_config)
     }
 
