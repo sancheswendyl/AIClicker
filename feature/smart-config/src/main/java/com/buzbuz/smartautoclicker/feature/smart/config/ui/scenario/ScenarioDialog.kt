@@ -78,8 +78,8 @@ class ScenarioDialog(
                 LinearLayout.LayoutParams.MATCH_PARENT, 120
             )
             setBackgroundColor(context.getColor(android.R.color.transparent))
-            clickable = true
-            focusable = true
+            isClickable = true
+            isFocusable = true
         }
 
         val tabText = TextView(context).apply {

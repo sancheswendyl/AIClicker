@@ -71,14 +71,14 @@ class ScenarioDialogViewModel @Inject constructor(
 
     /** Tells if the user is currently editing a scenario. If that's not the case, dialog should be closed. */
     val isEditingScenario: Flow<Boolean> = editionRepository.isEditingScenario
+        .distinctUntilChanged()
+        .debounce(1000)
 
     val scenarioVariables: Flow<List<Variable>> = editionRepository.editionState.editedScenarioVariables
 
     fun updateVariables(variables: List<Variable>) {
         editionRepository.editionState.updateScenarioVariables(variables)
     }
-        .distinctUntilChanged()
-        .debounce(1000)
 
     /** Tells if the configured scenario is valid and can be saved in database. */
     val scenarioCanBeSaved: Flow<Boolean> =
