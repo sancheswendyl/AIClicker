@@ -144,6 +144,7 @@ class ScenarioDialog(
                 CoordinatorLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = android.view.Gravity.BOTTOM
+                bottomMargin = 0
             }
             layoutParams = params
             addView(btnTab)
