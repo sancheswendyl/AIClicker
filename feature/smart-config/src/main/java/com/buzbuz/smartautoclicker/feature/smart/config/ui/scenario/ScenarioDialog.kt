@@ -120,12 +120,6 @@ class ScenarioDialog(
             addView(recyclerView)
         }
 
-        val params = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            android.view.Gravity.BOTTOM
-        )
-        tabContainer.layoutParams = params
         val navBarHeight = context.resources.getDimensionPixelSize(
             com.buzbuz.smartautoclicker.core.common.overlays.R.dimen.android_bottom_navigation_height
         )
