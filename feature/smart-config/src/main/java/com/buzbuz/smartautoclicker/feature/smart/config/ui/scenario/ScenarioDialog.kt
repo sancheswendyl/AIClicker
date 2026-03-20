@@ -115,11 +115,17 @@ class ScenarioDialog(
 
         val tabContainer = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(0xFFFF0000.toInt())
+            setBackgroundColor(0xFF1E1E2E.toInt())
             addView(btnTab)
             addView(recyclerView)
         }
 
+        val params = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            android.view.Gravity.BOTTOM
+        )
+        tabContainer.layoutParams = params
         val navBarHeight = context.resources.getDimensionPixelSize(
             com.buzbuz.smartautoclicker.core.common.overlays.R.dimen.android_bottom_navigation_height
         )
@@ -128,10 +134,9 @@ class ScenarioDialog(
             CoordinatorLayout.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = android.view.Gravity.BOTTOM
-            bottomMargin = navBarHeight + 400
+            bottomMargin = navBarHeight
         }
         tabContainer.layoutParams = tabParams
-        android.widget.Toast.makeText(context, "coordLayout=${dialogCoordinatorLayout?.javaClass?.simpleName}", android.widget.Toast.LENGTH_LONG).show()
         dialogCoordinatorLayout?.addView(tabContainer)
 
         variablesManager = VariablesManager(
@@ -158,8 +163,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        android.widget.Toast.makeText(context, "coordLayout=${dialogCoordinatorLayout?.javaClass?.simpleName}", android.widget.Toast.LENGTH_LONG).show()
-        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({ setupVariablesTab(dialog) }, 500)
+        dialogCoordinatorLayout?.post { setupVariablesTab(dialog) }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
