@@ -66,7 +66,7 @@ class ScenarioDialog(
         }
     }
 
-    private fun setupVariablesTab() {
+    private fun setupVariablesTab(dialog: BottomSheetDialog) {
         val iconTab = ImageView(context).apply {
             setImageResource(R.drawable.ic_chevron_up)
             layoutParams = LinearLayout.LayoutParams(60, 60)
