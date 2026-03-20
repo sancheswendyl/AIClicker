@@ -19,7 +19,6 @@ package com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -144,8 +143,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        setupVariablesTab(dialog)
-
+        setupVariablesTab()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -163,7 +161,6 @@ class ScenarioDialog(
 
     override fun onResume() {
         super.onResume()
-        if (variablesManager == null) setupVariablesTab()
         viewModel.monitorViews(
             createEventButton = createCopyButtons.buttonNew,
             saveButton = topBarBinding.buttonSave,
