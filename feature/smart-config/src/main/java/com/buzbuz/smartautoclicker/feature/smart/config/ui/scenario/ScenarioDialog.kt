@@ -131,6 +131,7 @@ class ScenarioDialog(
             bottomMargin = navBarHeight + 400
         }
         tabContainer.layoutParams = tabParams
+        android.widget.Toast.makeText(context, "coordLayout=${dialogCoordinatorLayout?.javaClass?.simpleName}", android.widget.Toast.LENGTH_LONG).show()
         dialogCoordinatorLayout?.addView(tabContainer)
 
         variablesManager = VariablesManager(
