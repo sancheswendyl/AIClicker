@@ -143,7 +143,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        setupVariablesTab()
+
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -161,7 +161,7 @@ class ScenarioDialog(
 
     override fun onResume() {
         super.onResume()
-        android.widget.Toast.makeText(context, "ScenarioDialog onResume!", android.widget.Toast.LENGTH_LONG).show()
+        if (variablesManager == null) setupVariablesTab()
         viewModel.monitorViews(
             createEventButton = createCopyButtons.buttonNew,
             saveButton = topBarBinding.buttonSave,
