@@ -19,6 +19,7 @@ package com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -143,6 +144,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
+        setupVariablesTab(dialog)
 
 
         lifecycleScope.launch {
