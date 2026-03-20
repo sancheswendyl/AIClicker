@@ -156,7 +156,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        setupVariablesTab(dialog)
+        dialogCoordinatorLayout?.post { setupVariablesTab(dialog) }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
