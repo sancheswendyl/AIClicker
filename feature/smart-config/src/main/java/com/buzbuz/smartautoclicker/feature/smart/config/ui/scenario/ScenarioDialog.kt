@@ -87,10 +87,7 @@ class ScenarioDialog(
         val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             ?: return
 
-        // Levantar o bottomSheet para dar espaço à aba
-        val sheetParams = bottomSheet.layoutParams as? CoordinatorLayout.LayoutParams ?: return
-        sheetParams.bottomMargin = 150
-        bottomSheet.layoutParams = sheetParams
+        // Sem modificação no bottomSheet por enquanto
 
         // Criar a aba de variáveis
         val iconTab = ImageView(context).apply {
@@ -156,6 +153,8 @@ class ScenarioDialog(
             onVariablesChanged = { viewModel.updateVariables(it) },
         )
 
+        val parent = bottomSheet.parent
+        android.widget.Toast.makeText(context, "parent=${parent?.javaClass?.simpleName}", android.widget.Toast.LENGTH_LONG).show()
         // Adicionar a aba no CoordinatorLayout pai do BottomSheet
         (bottomSheet.parent as? CoordinatorLayout)?.addView(tabContainer)
     }
