@@ -87,13 +87,10 @@ class ScenarioDialog(
         val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             ?: return
 
-        // Levantar o bottomSheet usando BottomSheetBehavior
-        val behavior = com.google.android.material.bottomsheet.BottomSheetBehavior.from(bottomSheet)
-        val screenHeight = context.resources.displayMetrics.heightPixels
-        behavior.peekHeight = screenHeight
-        behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-        // Ajustar padding inferior para dar espaço à aba
-        bottomSheet.setPadding(0, 0, 0, 160)
+        // Levantar o bottomSheet para dar espaço à aba
+        val sheetParams = bottomSheet.layoutParams as? CoordinatorLayout.LayoutParams ?: return
+        sheetParams.bottomMargin = 150
+        bottomSheet.layoutParams = sheetParams
 
         // Criar a aba de variáveis
         val iconTab = ImageView(context).apply {
@@ -144,7 +141,6 @@ class ScenarioDialog(
                 CoordinatorLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = android.view.Gravity.BOTTOM
-                bottomMargin = 0
             }
             layoutParams = params
             addView(btnTab)
