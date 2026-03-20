@@ -39,6 +39,7 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreCon
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListContent
 
 import android.widget.FrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
