@@ -158,7 +158,8 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        dialogCoordinatorLayout?.post { setupVariablesTab(dialog) }
+        android.widget.Toast.makeText(context, "coordLayout=${dialogCoordinatorLayout?.javaClass?.simpleName}", android.widget.Toast.LENGTH_LONG).show()
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({ setupVariablesTab(dialog) }, 500)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
