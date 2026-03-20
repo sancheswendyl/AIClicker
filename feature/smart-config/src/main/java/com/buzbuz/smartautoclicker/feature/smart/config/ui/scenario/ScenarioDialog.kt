@@ -129,7 +129,14 @@ class ScenarioDialog(
         val navBarHeight = context.resources.getDimensionPixelSize(
             com.buzbuz.smartautoclicker.core.common.overlays.R.dimen.android_bottom_navigation_height
         )
-        (tabContainer.layoutParams as? CoordinatorLayout.LayoutParams)?.bottomMargin = navBarHeight
+        val tabParams = CoordinatorLayout.LayoutParams(
+            CoordinatorLayout.LayoutParams.MATCH_PARENT,
+            CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = android.view.Gravity.BOTTOM
+            bottomMargin = navBarHeight
+        }
+        tabContainer.layoutParams = tabParams
         dialogCoordinatorLayout?.addView(tabContainer)
 
         variablesManager = VariablesManager(
