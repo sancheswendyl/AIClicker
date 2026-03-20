@@ -88,10 +88,11 @@ class ScenarioDialog(
             ?: return
 
         // Levantar o bottomSheet para dar espaço à aba
-        val sheetParams = bottomSheet.layoutParams as? CoordinatorLayout.LayoutParams ?: return
-        sheetParams.bottomMargin = 150
-        android.widget.Toast.makeText(context, "sheet=${bottomSheet.javaClass.simpleName} params=${sheetParams?.javaClass?.simpleName}", android.widget.Toast.LENGTH_LONG).show()
-        bottomSheet.layoutParams = sheetParams
+        val sheetParams = bottomSheet.layoutParams as? android.widget.FrameLayout.LayoutParams
+        if (sheetParams != null) {
+            sheetParams.bottomMargin = 150
+            bottomSheet.layoutParams = sheetParams
+        }
 
         // Criar a aba de variáveis
         val iconTab = ImageView(context).apply {
