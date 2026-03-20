@@ -115,7 +115,7 @@ class ScenarioDialog(
 
         val tabContainer = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(0xFF1E1E2E.toInt())
+            setBackgroundColor(0xFFFF0000.toInt())
             addView(btnTab)
             addView(recyclerView)
         }
@@ -128,7 +128,7 @@ class ScenarioDialog(
             CoordinatorLayout.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = android.view.Gravity.BOTTOM
-            bottomMargin = navBarHeight
+            bottomMargin = navBarHeight + 400
         }
         tabContainer.layoutParams = tabParams
         dialogCoordinatorLayout?.addView(tabContainer)
