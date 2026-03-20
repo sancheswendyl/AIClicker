@@ -1,27 +1,16 @@
 /*
  * Copyright (C) 2024 Kevin Buzeau
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario
 
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -50,7 +39,6 @@ class ScenarioDialog(
 ) : NavBarDialog(R.style.ScenarioConfigTheme) {
 
     private var variablesManager: VariablesManager? = null
-    private lateinit var scenarioRoot: ViewGroup
 
     private val viewModel: ScenarioDialogViewModel by viewModels(
         entryPoint = ScenarioConfigViewModelsEntryPoint::class.java,
@@ -58,14 +46,53 @@ class ScenarioDialog(
     )
 
     override fun onCreateView(): ViewGroup {
-        return super.onCreateView().also { root ->
-            scenarioRoot = root
+        return super.onCreateView().also {
             topBarBinding.setButtonVisibility(DialogNavigationButton.SAVE, View.VISIBLE)
             topBarBinding.dialogTitle.setText(R.string.dialog_title_scenario_config)
         }
     }
 
+    override fun inflateMenu(navBarView: NavigationBarView) {
+        navBarView.inflateMenu(R.menu.menu_scenario_config)
+    }
+
+    override fun onCreateContent(navItemId: Int): NavBarDialogContent = when (navItemId) {
+        R.id.page_image_events -> ImageEventListContent(context.applicationContext)
+        R.id.page_trigger_events -> TriggerEventListContent(context.applicationContext)
+        R.id.page_config -> ScenarioConfigContent(context.applicationContext)
+        R.id.page_more -> MoreContent(context.applicationContext)
+        else -> throw IllegalArgumentException("Unknown menu id $navItemId")
+    }
+
+    override fun onDialogCreated(dialog: BottomSheetDialog) {
+        super.onDialogCreated(dialog)
+        setupVariablesTab(dialog)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                launch { viewModel.isEditingScenario.collect(::onScenarioEditingStateChanged) }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { viewModel.navItemsValidity.collect(::updateContentsValidity) }
+                launch { viewModel.scenarioCanBeSaved.collect(::updateSaveButtonState) }
+                launch { viewModel.scenarioVariables.collect { variablesManager?.updateVariables(it) } }
+            }
+        }
+    }
+
     private fun setupVariablesTab(dialog: BottomSheetDialog) {
+        // Encontrar o BottomSheet e adicionar margem inferior
+        val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?: return
+
+        // Levantar o bottomSheet para dar espaço à aba
+        val sheetParams = bottomSheet.layoutParams as? CoordinatorLayout.LayoutParams ?: return
+        sheetParams.bottomMargin = 150
+        bottomSheet.layoutParams = sheetParams
+
+        // Criar a aba de variáveis
         val iconTab = ImageView(context).apply {
             setImageResource(R.drawable.ic_chevron_up)
             layoutParams = LinearLayout.LayoutParams(60, 60)
@@ -88,7 +115,7 @@ class ScenarioDialog(
             gravity = android.view.Gravity.CENTER_VERTICAL
             setPadding(48, 0, 48, 0)
             layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 120
+                LinearLayout.LayoutParams.MATCH_PARENT, 150
             )
             isClickable = true
             isFocusable = true
@@ -109,10 +136,13 @@ class ScenarioDialog(
         val tabContainer = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1E1E2E.toInt())
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            val params = CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                CoordinatorLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = android.view.Gravity.BOTTOM
+            }
+            layoutParams = params
             addView(btnTab)
             addView(recyclerView)
         }
@@ -126,37 +156,8 @@ class ScenarioDialog(
             onVariablesChanged = { viewModel.updateVariables(it) },
         )
 
-        scenarioRoot.addView(tabContainer)
-    }
-
-    override fun inflateMenu(navBarView: NavigationBarView) {
-        navBarView.inflateMenu(R.menu.menu_scenario_config)
-    }
-
-    override fun onCreateContent(navItemId: Int): NavBarDialogContent = when (navItemId) {
-        R.id.page_image_events -> ImageEventListContent(context.applicationContext)
-        R.id.page_trigger_events -> TriggerEventListContent(context.applicationContext)
-        R.id.page_config -> ScenarioConfigContent(context.applicationContext)
-        R.id.page_more -> MoreContent(context.applicationContext)
-        else -> throw IllegalArgumentException("Unknown menu id $navItemId")
-    }
-
-    override fun onDialogCreated(dialog: BottomSheetDialog) {
-        super.onDialogCreated(dialog)
-        setupVariablesTab()
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                launch { viewModel.isEditingScenario.collect(::onScenarioEditingStateChanged) }
-            }
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { viewModel.navItemsValidity.collect(::updateContentsValidity) }
-                launch { viewModel.scenarioCanBeSaved.collect(::updateSaveButtonState) }
-                launch { viewModel.scenarioVariables.collect { variablesManager?.updateVariables(it) } }
-            }
-        }
+        // Adicionar a aba no CoordinatorLayout pai do BottomSheet
+        (bottomSheet.parent as? CoordinatorLayout)?.addView(tabContainer)
     }
 
     override fun onResume() {
