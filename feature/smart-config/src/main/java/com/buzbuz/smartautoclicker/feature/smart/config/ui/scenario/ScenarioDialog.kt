@@ -39,7 +39,6 @@ import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.more.MoreCon
 import com.buzbuz.smartautoclicker.feature.smart.config.ui.scenario.triggerevents.TriggerEventListContent
 
 import android.widget.FrameLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -126,18 +125,8 @@ class ScenarioDialog(
             android.view.Gravity.BOTTOM
         )
         tabContainer.layoutParams = params
-        val navBarHeight = context.resources.getDimensionPixelSize(
-            com.buzbuz.smartautoclicker.core.common.overlays.R.dimen.android_bottom_navigation_height
-        )
-        val tabParams = CoordinatorLayout.LayoutParams(
-            CoordinatorLayout.LayoutParams.MATCH_PARENT,
-            CoordinatorLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            gravity = android.view.Gravity.BOTTOM
-            bottomMargin = navBarHeight
-        }
-        tabContainer.layoutParams = tabParams
-        dialogCoordinatorLayout?.addView(tabContainer)
+        (dialog.window?.decorView?.findViewById<FrameLayout>(com.google.android.material.R.id.container))
+            ?.addView(tabContainer)
 
         variablesManager = VariablesManager(
             context = context,
@@ -163,7 +152,7 @@ class ScenarioDialog(
 
     override fun onDialogCreated(dialog: BottomSheetDialog) {
         super.onDialogCreated(dialog)
-        dialogCoordinatorLayout?.post { setupVariablesTab(dialog) }
+        setupVariablesTab(dialog)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
