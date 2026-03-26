@@ -139,6 +139,13 @@ class ScenarioDialog(
         (dialog.window?.decorView?.findViewById<FrameLayout>(com.google.android.material.R.id.container))
             ?.addView(tabContainer)
 
+        // Empurra o FAB acima da aba de variáveis
+        val fabParams = createCopyButtons.root.layoutParams as? CoordinatorLayout.LayoutParams
+        if (fabParams != null) {
+            fabParams.bottomMargin = navBarHeight + 120 + 16
+            createCopyButtons.root.layoutParams = fabParams
+        }
+
         variablesManager = VariablesManager(
             context = context,
             overlayManager = overlayManager,
