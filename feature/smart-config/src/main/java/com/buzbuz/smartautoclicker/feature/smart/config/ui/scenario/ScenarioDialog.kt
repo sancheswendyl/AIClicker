@@ -142,7 +142,7 @@ class ScenarioDialog(
         // Empurra o FAB acima da aba de variáveis
         val fabParams = createCopyButtons.root.layoutParams as? CoordinatorLayout.LayoutParams
         if (fabParams != null) {
-            fabParams.bottomMargin = navBarHeight + 120 + 16
+            fabParams.bottomMargin = navBarHeight + 120 + 4
             createCopyButtons.root.layoutParams = fabParams
         }
 
