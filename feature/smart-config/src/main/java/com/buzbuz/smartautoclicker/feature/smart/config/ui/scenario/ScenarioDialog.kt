@@ -91,11 +91,7 @@ class ScenarioDialog(
         val btnAdd = android.widget.ImageButton(context).apply {
             setImageResource(R.drawable.ic_add)
             background = null
-            layoutParams = LinearLayout.LayoutParams(80, 80).apply {
-                marginEnd = 16
-                bottomMargin = 8
-                topMargin = 8
-            }
+            layoutParams = LinearLayout.LayoutParams(80, 80).apply { marginEnd = 16 }
             setOnClickListener { variablesManager?.addVariable() }
         }
 
