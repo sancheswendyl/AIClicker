@@ -141,10 +141,10 @@ class ScenarioDialog(
 
         // Empurra o FAB acima da aba de variáveis
         val density = context.resources.displayMetrics.density
-        val tabHeightPx = (56 * density).toInt()
+        val tabHeightPx = (40 * density).toInt()
         val fabParams = createCopyButtons.root.layoutParams as? CoordinatorLayout.LayoutParams
         if (fabParams != null) {
-            fabParams.bottomMargin = navBarHeight + tabHeightPx + (8 * density).toInt()
+            fabParams.bottomMargin = navBarHeight + tabHeightPx + (4 * density).toInt()
             createCopyButtons.root.layoutParams = fabParams
         }
 
